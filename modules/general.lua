@@ -8,5 +8,5 @@ evl_Reminders:AddReminder("No bag-slots available", function() return MainMenuBa
 -- Riding Crop
 evl_Reminders:AddReminder("Using Riding crop while not mounted", function() return (IsEquippedItem("Riding Crop") or IsEquippedItem("Skybreaker Whip")) and not IsMounted() end, "INV_Misc_Crop_02")
 
--- Kirin Tor rings
--- evl_Reminders:AddReminder("Using Band of the Kirin Tor", function() return IsEquippedItem("Band of the Kirin Tor") end, "INV_Jewelry_Ring_74")
+-- Kirin Tor ring
+evl_Reminders:AddReminder("Using Band of the Kirin Tor", function() return IsEquippedItem("Band of the Kirin Tor") end, "INV_Jewelry_Ring_74")
