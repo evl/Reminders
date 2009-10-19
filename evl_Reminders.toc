@@ -1,0 +1,11 @@
+## Interface: 30200
+## Title: Evl's Reminders
+## Author: Evl
+
+evl_Reminders.lua
+
+modules\general.lua
+modules\deathknight.lua
+modules\druid.lua
+modules\priest.lua
+modules\rogue.lua
