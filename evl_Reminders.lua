@@ -1,9 +1,23 @@
-evl_Reminders = CreateFrame("Frame", "EvlReminders", UIParent)
+evl_Reminders = CreateFrame("Frame", nil, UIParent)
+evl_Reminders.config = {
+	scale = 1,
+	position = {"CENTER", UIParent, "CENTER", 300, 0},
+
+	rogue = {
+		mainHandPoison = "Instant Poison",
+		offHandPoison = "Deadly Poison",
+		mainHandSecondaryPoison = "Wound Poison",
+		offHandSecondaryPoison = "Crippling Poison",
+		
+		thresholdTime = 10,
+	}
+}
 
 local UPDATE_INTERVAL = 0.5
 local ICON_PATH = "Interface\\Icons\\"
 local DEFAULT_ICON = "Temp"
 
+local config = evl_Reminders.config
 local lastUpdate = 0
 local reminders = {}
 local menuFrame = CreateFrame("Frame", "evl_RemindersMenu", UIParent, "UIDropDownMenuTemplate")
@@ -16,6 +30,11 @@ end
 
 local disableReminder = function(self, reminder)
 	reminder.active = false
+end
+
+local onEvent = function(self)
+	self:SetScale(config.scale)
+	self:SetPoint(config.position[1], config.position[2], config.position[3], config.position[4], config.position[5])
 end
 
 local onUpdate = function(self, elapsed)
@@ -199,5 +218,8 @@ end
 
 evl_Reminders:SetWidth(36)
 evl_Reminders:SetHeight(36)
-evl_Reminders:SetPoint("CENTER", UIParent, 300, 0)
+
+evl_Reminders:SetScript("OnEvent", onEvent)
 evl_Reminders:SetScript("OnUpdate", onUpdate)
+
+evl_Reminders:RegisterEvent("PLAYER_ENTERING_WORLD")

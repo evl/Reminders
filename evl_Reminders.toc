@@ -3,6 +3,7 @@
 ## Author: Evl
 
 evl_Reminders.lua
+config.lua
 
 modules\general.lua
 
