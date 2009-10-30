@@ -1,5 +1,6 @@
 evl_Reminders.config.scale = 1 -- Icon scale (default size is 36x36)
 evl_Reminders.config.position = {"CENTER", UIParent, "CENTER", 300, 0} -- Anchor position, see http://www.wowwiki.com/API_Region_SetPoint
+evl_Reminders.config.updateInterval = 1 -- Seconds between reminder updates
 
 -- Rogue
 evl_Reminders.config.rogue.mainHandPoison = "Instant Poison" -- Preferred main-hand poison

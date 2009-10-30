@@ -2,6 +2,7 @@ evl_Reminders = CreateFrame("Frame", nil, UIParent)
 evl_Reminders.config = {
 	scale = 1,
 	position = {"CENTER", UIParent, "CENTER", 300, 0},
+	updateInterval = 1,
 
 	rogue = {
 		mainHandPoison = "Instant Poison",
@@ -16,13 +17,18 @@ evl_Reminders.config = {
 local config = evl_Reminders.config
 local reminders = {}
 
-local handler
-local onEvent = function(self, event, ...)
-	handler = self[event]
+local onEvent = function(self, event)
+	self:SetScale(config.scale)
+	self:SetPoint(config.position[1], config.position[2], config.position[3], config.position[4], config.position[5])
+end
+
+local lastUpdate = 0
+local onUpdate = function(self, elapsed)
+	lastUpdate = lastUpdate + elapsed
 	
-	if handler then
-		handler(self, event, ...)
-	else
+	if lastUpdate > config.updateInterval then
+		lastUpdate = 0
+		
 		self:UpdateReminders()
 	end
 end
@@ -77,8 +83,6 @@ end
 local disableReminder = function(self, reminder, reactivateTime)
 	reminder.active = false
 	reminder.reactivateTime = reactivateTime and (GetTime() + reactivateTime) or 0
-
-	evl_Reminders:UpdateReminders()
 end
 
 local menu
@@ -130,7 +134,7 @@ function evl_Reminders:PlayerHasBuff(name)
 	return false
 end
 
-function evl_Reminders:AddReminder(name, event, callback, icon, attributes, tooltip, color)
+function evl_Reminders:AddReminder(name, callback, icon, attributes, tooltip, color)
 	local buttonName = "ReminderButton" .. #reminders
 	local frame = CreateFrame("Button", buttonName, self, "SecureActionButtonTemplate, ActionButtonTemplate")
 
@@ -167,63 +171,48 @@ function evl_Reminders:AddReminder(name, event, callback, icon, attributes, tool
 	
 	table.insert(reminders, frame)
 
-	self:RegisterEvent(event)
-
 	return frame
 end
 
-function evl_Reminders:UpdateReminders(event, unit)
-	if not InCombatLockdown() then
-		local result
-		local previousReminder
-		
-		for _, reminder in ipairs(reminders) do
+function evl_Reminders:UpdateReminders()
+	local result
+	local previousReminder
+	local inCombat = InCombatLockdown()
+
+	for _, reminder in ipairs(reminders) do
+		if not inCombat then
 			if not reminder.active and (reminder.reactivateTime > 0 and GetTime() >= reminder.reactivateTime) then
 				reminder.active = true
 				reminder.reactivateTime = 0
 			end
 
 			result = reminder.active and reminder.callback()
+		end
 
-			if result then
-				reminder:ClearAllPoints()
+		if result then
+			reminder:ClearAllPoints()
 
-				if previousReminder then
-					reminder:SetPoint("LEFT", previousReminder, "RIGHT", 5, 0)
-				else
-					reminder:SetPoint("TOPLEFT", self)
-				end
-
-				reminder:Show()
-
-				previousReminder = reminder
+			if previousReminder then
+				reminder:SetPoint("LEFT", previousReminder, "RIGHT", 5, 0)
 			else
-				reminder:Hide()
+				reminder:SetPoint("TOPLEFT", self)
 			end
+
+			reminder:Show()
+
+			previousReminder = reminder
+		elseif inCombat then
+			reminder:SetAlpha(0)
+		else
+			reminder:SetAlpha(1)
+			reminder:Hide()
 		end
 	end
 end
 
-function evl_Reminders:PLAYER_ENTERING_WORLD(event)
-	self:SetScale(config.scale)
-	self:SetPoint(config.position[1], config.position[2], config.position[3], config.position[4], config.position[5])
-
-	self:UpdateReminders()
-end
-
-function evl_Reminders:UNIT_AURA(event, unit)
-	if unit == "player" then
-		self:UpdateReminders()
-	end
-end
-
-function evl_Reminders:UNIT_INVENTORY_CHANGED(event, unit)
-	self:UNIT_AURA(event, unit)
-end
-
 evl_Reminders:SetWidth(36)
 evl_Reminders:SetHeight(36)
-
 evl_Reminders:SetScript("OnEvent", onEvent)
+evl_Reminders:SetScript("OnUpdate", onUpdate)
+
 evl_Reminders:RegisterEvent("PLAYER_ENTERING_WORLD")
-evl_Reminders:RegisterEvent("PLAYER_REGEN_ENABLED")
