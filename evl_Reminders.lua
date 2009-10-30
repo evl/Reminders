@@ -198,13 +198,13 @@ function evl_Reminders:UpdateReminders()
 				reminder:SetPoint("TOPLEFT", self)
 			end
 
+			reminder:SetAlpha(1)
 			reminder:Show()
 
 			previousReminder = reminder
 		elseif inCombat then
 			reminder:SetAlpha(0)
 		else
-			reminder:SetAlpha(1)
 			reminder:Hide()
 		end
 	end
