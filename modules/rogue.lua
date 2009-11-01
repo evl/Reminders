@@ -110,7 +110,8 @@ if select(2, UnitClass("player")) == "ROGUE" then
 	end
 	
 	local hasValidWeapon = function(offHand)
-		return GetInventoryItemQuality("player", offHand and 17 or 16) > 1
+		local quality = GetInventoryItemQuality("player", offHand and 17 or 16)
+		return quality and quality > 1
 	end
 	
 	local poisonTooltip = "Left-click to apply %s\nRight-click to apply %s"
