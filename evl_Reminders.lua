@@ -19,7 +19,7 @@ local reminders = {}
 
 local onEvent = function(self, event)
 	self:SetScale(config.scale)
-	self:SetPoint(config.position[1], config.position[2], config.position[3], config.position[4], config.position[5])
+	self:SetPoint(unpack(config.position))
 end
 
 local lastUpdate = 0
@@ -151,7 +151,7 @@ function evl_Reminders:AddReminder(name, callback, icon, attributes, tooltip, co
 	texture:SetTexCoord(.07, .93, .07, .93)
 	
 	if color then
-		texture:SetVertexColor(color[1], color[2], color[3])
+		texture:SetVertexColor(unpack(color))
 	end
 
 	_G[frame:GetName() .. "Icon"]:SetTexture(texture)
