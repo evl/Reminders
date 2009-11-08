@@ -180,26 +180,26 @@ function evl_Reminders:UpdateReminders()
 	local inCombat = InCombatLockdown()
 
 	for _, reminder in ipairs(reminders) do
-		if not inCombat then
-			if not reminder.active and (reminder.reactivateTime > 0 and GetTime() >= reminder.reactivateTime) then
-				reminder.active = true
-				reminder.reactivateTime = 0
-			end
-
-			result = reminder.active and reminder.callback()
+		if not reminder.active and (reminder.reactivateTime > 0 and GetTime() >= reminder.reactivateTime) then
+			reminder.active = true
+			reminder.reactivateTime = 0
 		end
 
+		result = reminder.active and reminder.callback()
+
 		if result then
-			reminder:ClearAllPoints()
+			if not inCombat then
+				reminder:ClearAllPoints()
 
-			if previousReminder then
-				reminder:SetPoint("LEFT", previousReminder, "RIGHT", 5, 0)
-			else
-				reminder:SetPoint("TOPLEFT", self)
+				if previousReminder then
+					reminder:SetPoint("LEFT", previousReminder, "RIGHT", 5, 0)
+				else
+					reminder:SetPoint("TOPLEFT", self)
+				end
+
+				reminder:SetAlpha(1)
+				reminder:Show()
 			end
-
-			reminder:SetAlpha(1)
-			reminder:Show()
 
 			previousReminder = reminder
 		elseif inCombat then
