@@ -1,3 +1,5 @@
+Rule-based automated reminders for commonly forgotten tasks.
+
 !http://i37.tinypic.com/2lsziq9.jpg!
 
 h2. Usage
