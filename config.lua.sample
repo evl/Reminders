@@ -6,5 +6,5 @@ evl_Reminders.config.updateInterval = 1 -- Seconds between reminder updates
 evl_Reminders.config.rogue.mainHandPoison = "Instant Poison" -- Preferred main-hand poison
 evl_Reminders.config.rogue.offHandPoison = "Deadly Poison" -- Preferred off-hand poison
 evl_Reminders.config.rogue.mainHandSecondaryPoison = "Wound Poison" -- Preferred secondary main-hand poison
-evl_Reminders.config.rogue.offHandSecondaryPoison = "Crippling Poison"-- Preferred secondary off-hand poison
+evl_Reminders.config.rogue.offHandSecondaryPoison = "Mind-numbing Poison"-- Preferred secondary off-hand poison
 evl_Reminders.config.rogue.thresholdTime = 10 -- Number of minutes to warn before a poison expires

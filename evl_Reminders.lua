@@ -8,7 +8,7 @@ evl_Reminders.config = {
 		mainHandPoison = "Instant Poison",
 		offHandPoison = "Deadly Poison",
 		mainHandSecondaryPoison = "Wound Poison",
-		offHandSecondaryPoison = "Crippling Poison",
+		offHandSecondaryPoison = "Mind-numbing Poison",
 		
 		thresholdTime = 10,
 	}
@@ -121,7 +121,7 @@ function evl_Reminders:IsBigWigsModuleActive(name)
 end
 
 function evl_Reminders:PlayerHasBuff(name)
-	for i = 1, 32 do
+	for i = 1, BUFF_MAX_DISPLAY do
 		local buffName = UnitBuff("player", i)
 
 		if not buffName then
@@ -131,6 +131,22 @@ function evl_Reminders:PlayerHasBuff(name)
 		end
 	end
 
+	return false
+end
+
+function evl_Reminders:HasTalent(tabIndex, talentIndex, rankRequired)
+	return select(5, GetTalentInfo(tabIndex, talentIndex)) >= (rankRequired or 1)
+end
+
+function evl_Reminders:HasGlyph(id)
+	for i = 1, 6 do
+		local _, _, glyphSpell = GetGlyphSocketInfo(i)
+		
+		if glyphSpell == id then
+			return true
+		end
+	end
+	
 	return false
 end
 
