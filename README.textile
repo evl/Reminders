@@ -6,6 +6,29 @@ h2. Usage
 
 Alt + right-click a reminder icon to bring up context menu
 
+h2. Modules
+
+*Druid*
+* Missing Mark of the Wild
+* Missing Thorns
+
+*Mage*
+* Armor missing (Molten Armor or Mage Armor)
+
+*Priest*
+* Missing Power Word: Fortitude
+* Missing Inner Fire
+
+*Rogue*
+* Main/Off-hand poison missing
+* Main/Off-hand poison expiring soon
+
+*General*
+* Blessed Medallion of Karabor equipped wihout additional Shadow Resistance items
+* Less than 3 bag-slots available
+* No bag-slots available
+* Band of the Kirin Tor equipped
+
 h2. Customization
 
 You can add your own custom reminders with the following syntax:
