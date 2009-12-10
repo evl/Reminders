@@ -2,6 +2,10 @@ Rule-based automated reminders for commonly forgotten tasks.
 
 !http://i37.tinypic.com/2lsziq9.jpg!
 
+h2. Configuration
+
+Copy @config.lua.sample@ to @config.lua@ and modify as required.
+
 h2. Usage
 
 Alt + right-click a reminder icon to bring up context menu
