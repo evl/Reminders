@@ -12,3 +12,5 @@ modules\druid.lua
 modules\mage.lua
 modules\priest.lua
 modules\rogue.lua
+modules\shaman.lua
+modules\warlock.lua

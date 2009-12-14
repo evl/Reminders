@@ -14,4 +14,7 @@ evl_Reminders.config.shaman.mainHandEnchant = "Windfury Weapon" -- Preferred mai
 evl_Reminders.config.shaman.offHandEnchant = "Flametongue Weapon" -- Preferred off-hand enchant
 evl_Reminders.config.shaman.mainHandSecondaryEnchant = "Flametongue Weapon" -- Preferred secondary main-hand enchant
 evl_Reminders.config.shaman.offHandSecondaryEnchant = "Windfury Weapon" -- Preferred secondary off-hand enchant
-evl_Reminders.config.shaman.thresholdTime = 10 -- Number of minutes to warn before an enchant expires
+evl_Reminders.config.shaman.thresholdTime = 10 -- Number of minutes to warn before a weapon enchant expires
+
+-- Warlock
+evl_Reminders.config.warlock.thresholdTime = 10 -- Number of minutes to warn before a weapon enchant expires

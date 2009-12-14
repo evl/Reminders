@@ -20,7 +20,11 @@ evl_Reminders.config = {
 		offHandSecEnchant = "Windfury Weapon",
 
 		thresholdTime = 10,
-	}
+	},
+	
+	warlock = {
+		thresholdTime = 10,		
+	},
 }
 
 local config = evl_Reminders.config
