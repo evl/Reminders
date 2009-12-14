@@ -27,6 +27,16 @@ h2. Modules
 * Main/Off-hand poison missing
 * Main/Off-hand poison expiring soon
 
+*Shaman*
+* Missing shield (Water Shield, Lightning Shield)
+* Main/Off-hand weapon enchant missing
+* Main/Off-hand weapon enchant expiring soon
+
+*Warlock*
+* Missing armor (Fel Armor, Demon Skin)
+* Main/Off-hand weapon enchant missing
+* Main/Off-hand weapon enchant expiring soon
+
 *General*
 * Blessed Medallion of Karabor equipped wihout additional Shadow Resistance items
 * Less than 3 bag-slots available
