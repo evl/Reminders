@@ -92,7 +92,6 @@ if select(2, UnitClass("player")) == "ROGUE" then
 	
 	local getPoisonIcon = function(poison)
 		local poisonData = poisons[poison]
-		local icon
 		
 		if poisonData then
 			return poisonData.icon

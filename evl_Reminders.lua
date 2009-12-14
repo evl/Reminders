@@ -11,6 +11,15 @@ evl_Reminders.config = {
 		offHandSecondaryPoison = "Mind-numbing Poison",
 		
 		thresholdTime = 10,
+	},
+	
+	shaman = {
+		mainHandEnchant = "Windfury Weapon",
+		offHandEnchant = "Flametongue Weapon",
+		mainHandSecEnchant = "Flametongue Weapon",
+		offHandSecEnchant = "Windfury Weapon",
+
+		thresholdTime = 10,
 	}
 }
 
