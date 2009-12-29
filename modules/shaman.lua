@@ -39,8 +39,12 @@ if select(2, UnitClass("player")) == "SHAMAN" then
 	end
 
 	local hasValidWeapon = function(offHand)
+		if offHand and IsEquippedItemType("Shields") then
+			return false
+		end
+
 		local quality = GetInventoryItemQuality("player", offHand and 17 or 16)
-		return quality and quality > 1 and (not IsEquippedItemType("Shields"))
+		return quality and quality > 1
 	end
 
 	local mainHandIcon = getEnchantIcon(config.mainHandEnchant)
