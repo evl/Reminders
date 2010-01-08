@@ -139,17 +139,7 @@ function evl_Reminders:IsBigWigsModuleActive(name)
 end
 
 function evl_Reminders:PlayerHasBuff(name)
-	for i = 1, BUFF_MAX_DISPLAY do
-		local buffName = UnitBuff("player", i)
-
-		if not buffName then
-			break
-		elseif buffName == name then
-			return true
-		end
-	end
-
-	return false
+	return UnitAura("player", name, nil, "HELPFUL")
 end
 
 function evl_Reminders:HasTalent(tabIndex, talentIndex, rankRequired)
