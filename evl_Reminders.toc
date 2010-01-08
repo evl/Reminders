@@ -6,6 +6,7 @@ evl_Reminders.lua
 config.lua
 
 modules\general.lua
+modules\consumables.lua
 
 modules\deathknight.lua
 modules\druid.lua

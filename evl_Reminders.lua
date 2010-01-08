@@ -3,6 +3,11 @@ evl_Reminders.config = {
 	scale = 1,
 	position = {"CENTER", UIParent, "CENTER", 300, 0},
 	updateInterval = 1,
+	
+	consumables = {
+		foodThresholdTime = 10,
+		flaskThresholdTime = 5,
+	},
 
 	rogue = {
 		mainHandPoison = "Instant Poison",

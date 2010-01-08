@@ -2,6 +2,10 @@ evl_Reminders.config.scale = 1 -- Icon scale (default size is 36x36)
 evl_Reminders.config.position = {"CENTER", UIParent, "CENTER", 300, 0} -- Anchor position, see http://www.wowwiki.com/API_Region_SetPoint
 evl_Reminders.config.updateInterval = 1 -- Seconds between reminder updates
 
+-- Consumables
+evl_Reminders.config.consumables.foodThresholdTime = 10 -- Number of minutes to warn before a food buff expires
+evl_Reminders.config.consumables.flaskThresholdTime = 5 -- Number of minutes to warn before a flask expires
+
 -- Rogue
 evl_Reminders.config.rogue.mainHandPoison = "Instant Poison" -- Preferred main-hand poison
 evl_Reminders.config.rogue.offHandPoison = "Deadly Poison" -- Preferred off-hand poison
