@@ -37,11 +37,13 @@ h2. Modules
 * Main/Off-hand weapon enchant missing
 * Main/Off-hand weapon enchant expiring soon
 
+*Consumables*
+* Food buff expiration warning
+* Flask expiration warning
+
 *General*
-* Blessed Medallion of Karabor equipped wihout additional Shadow Resistance items
 * Less than 3 bag-slots available
 * No bag-slots available
-* Band of the Kirin Tor equipped
 
 h2. Customization
 
