@@ -134,7 +134,7 @@ if select(2, UnitClass("player")) == "ROGUE" then
 	local offHandTooltip = getPoisonTooltip(config.offHandPoison, config.offHandSecondaryPoison)
 	
 	evl_Reminders:AddReminder("Main-hand poison expiring soon", function() return hasValidWeapon() and getPoisonDuration() > 0 and getPoisonDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
-	evl_Reminders:AddReminder("Off-hand poison expiring soon", function() return hasValidWeapon(true) and getPoisonDuration(true) > 0 and getPoisonDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)
 	evl_Reminders:AddReminder("Main-hand poison missing", function() return hasValidWeapon() and getPoisonDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHandTooltip, {1, 0.1, 0.1})
+	evl_Reminders:AddReminder("Off-hand poison expiring soon", function() return hasValidWeapon(true) and getPoisonDuration(true) > 0 and getPoisonDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)
 	evl_Reminders:AddReminder("Off-hand poison missing", function() return hasValidWeapon(true) and getPoisonDuration(true) == -1 end, offHandIcon, offHandAttributes, offHandTooltip, {1, 0.1, 0.1})
 end

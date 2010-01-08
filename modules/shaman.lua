@@ -55,7 +55,7 @@ if select(2, UnitClass("player")) == "SHAMAN" then
 	local offHandTooltip = getEnchantTooltip(config.offHandEnchant, config.offHandSecondaryEnchant)
 
 	evl_Reminders:AddReminder("Main-Hand weapon enchant expiring soon", function() return hasValidWeapon() and getEnchantDuration() > 0 and getEnchantDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
-	evl_Reminders:AddReminder("Off-Hand weapon enchant expiring soon", function() return hasValidWeapon(true) and getEnchantDuration(true) > 0 and getEnchantDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)
 	evl_Reminders:AddReminder("Main-hand weapon enchant missing", function() return hasValidWeapon() and getEnchantDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHantTooltip, {1, 0.1, 0.1})
+	evl_Reminders:AddReminder("Off-Hand weapon enchant expiring soon", function() return hasValidWeapon(true) and getEnchantDuration(true) > 0 and getEnchantDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)
 	evl_Reminders:AddReminder("Off-hand weapon enchant missing", function() return hasValidWeapon(true) and getEnchantDuration(true) == -1 end, offHandIcon, offHandAttributes, offHantTooltip, {1, 0.1, 0.1})
 end
