@@ -15,7 +15,7 @@ if select(2, UnitClass("player")) == "MAGE" then
 		local gem = manaGems[rank]
 		
 		if gem then
-			return GetItemCount(gem, false, true) < 3
+			return GetItemCount(gem, false, true) == 3
 		end
 	end
 	
