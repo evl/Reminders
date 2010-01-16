@@ -8,7 +8,7 @@ local hasAuraDuration = function(name, duration)
 end
 
 local hasFlaskDuration = function(duration)
-	for i = 0, BUFF_MAX_DISPLAY do
+	for i = 1, BUFF_MAX_DISPLAY do
 		local name, _, _, _, _, _, expirationTime = UnitAura("player", i, "HELPFUL|CANCELABLE")
 	
 		if name then
