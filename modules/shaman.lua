@@ -1,7 +1,7 @@
 if select(2, UnitClass("player")) == "SHAMAN" then	
 	local config = evl_Reminders.config.shaman
 
-	evl_Reminders:AddReminder("Missing Shield", function() return not evl_Reminders:PlayerHasBuff("Water Shield") and not evl_Reminders:PlayerHasBuff("Lightning Shield") end, "Ability_Shaman_WaterShield", {type = "spell", spell1 = "Water Shield", spell2 = "Lightning Shield", unit = "player"})
+	evl_Reminders:AddReminder("Missing Shield", function() return not evl_Reminders:PlayerHasBuff("Water Shield") and not evl_Reminders:PlayerHasBuff("Lightning Shield") end, "Ability_Shaman_WaterShield", {type = "spell", unit = "player", spell1 = "Water Shield", spell2 = "Lightning Shield"})
 
 	--Temporary Weapon Echants
 	local icons = {

@@ -1,5 +1,5 @@
 if select(2, UnitClass("player")) == "MAGE" then	
-	evl_Reminders:AddReminder("Missing Armor", function() return not evl_Reminders:PlayerHasBuff("Molten Armor") and not evl_Reminders:PlayerHasBuff("Mage Armor") end, "Ability_Mage_MoltenArmor", {type = "spell", spell1 = "Molten Armor",spell2 = "Mage Armor", unit = "player"})
+	evl_Reminders:AddReminder("Missing Armor", function() return not evl_Reminders:PlayerHasBuff("Molten Armor") and not evl_Reminders:PlayerHasBuff("Mage Armor") end, "Ability_Mage_MoltenArmor", {type = "spell", unit = "player", spell1 = "Molten Armor", spell2 = "Mage Armor"})
 
 	local manaGems = {
 		["Rank 1"] = "Mana Agate",
@@ -19,5 +19,5 @@ if select(2, UnitClass("player")) == "MAGE" then
 		end
 	end
 	
-	evl_Reminders:AddReminder("Less than 3 Mana Gems remaining", function() return not hasManaGem() end, "INV_Misc_Gem_Sapphire_02",  {type1 = "spell", spell1 = "Conjure Mana Gem"})
+	evl_Reminders:AddReminder("Less than 3 Mana Gems remaining", function() return not hasManaGem() end, "INV_Misc_Gem_Sapphire_02",  {type = "spell", spell = "Conjure Mana Gem"})
 end

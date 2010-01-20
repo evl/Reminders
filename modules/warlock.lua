@@ -1,5 +1,5 @@
 if select(2, UnitClass("player")) == "WARLOCK" then	
-	evl_Reminders:AddReminder("Armor missing", function() return not evl_Reminders:PlayerHasBuff("Demon Skin") and not evl_Reminders:PlayerHasBuff("Fel Armor") end, "Spell_Shadow_FelArmour", {type = "spell", spell1 = "Fel Armor", spell2 = "Demon Skin", unit = "player"})
+	evl_Reminders:AddReminder("Armor missing", function() return not evl_Reminders:PlayerHasBuff("Demon Skin") and not evl_Reminders:PlayerHasBuff("Fel Armor") end, "Spell_Shadow_FelArmour", {type = "spell", unit = "player", spell1 = "Fel Armor", spell2 = "Demon Skin"})
 
 	local getEnchantDuration = function()
 		local hasMainHandEnchant, mainHandExpiration, _, hasOffHandEnchant, offHandExpiration = GetWeaponEnchantInfo()
