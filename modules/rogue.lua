@@ -126,12 +126,12 @@ if select(2, UnitClass("player")) == "ROGUE" then
 	end
 	
 	local poisonTooltip = "Left-click to apply %s\nRight-click to apply %s"
-	local mainHandIcon = getPoisonIcon(config.mainHandPoison)
-	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = getPoisonItemString(config.mainHandPoison), item2 = getPoisonItemString(config.mainHandSecondaryPoison)}
-	local mainHandTooltip = getPoisonTooltip(config.mainHandPoison, config.mainHandSecondaryPoison)
-	local offHandIcon = getPoisonIcon(config.offHandPoison)
-	local offHandAttributes = {type = "item", ["target-slot"] = 17, item1 = getPoisonItemString(config.offHandPoison), item2 = getPoisonItemString(config.offHandSecondaryPoison)}
-	local offHandTooltip = getPoisonTooltip(config.offHandPoison, config.offHandSecondaryPoison)
+	local mainHandIcon = getPoisonIcon(config.mainHandPoisons[1])
+	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = getPoisonItemString(config.mainHandPoisons[1]), item2 = getPoisonItemString(config.mainHandPoisons[2])}
+	local mainHandTooltip = getPoisonTooltip(config.mainHandPoisons[1], config.mainHandPoisons[2])
+	local offHandIcon = getPoisonIcon(config.offHandPoisons[1])
+	local offHandAttributes = {type = "item", ["target-slot"] = 17, item1 = getPoisonItemString(config.offHandPoisons[1]), item2 = getPoisonItemString(config.offHandPoisons[2])}
+	local offHandTooltip = getPoisonTooltip(config.offHandPoisons[1], config.offHandPoisons[2])
 	
 	evl_Reminders:AddReminder("Main-hand poison expiring soon", function() return hasValidWeapon() and getPoisonDuration() > 0 and getPoisonDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
 	evl_Reminders:AddReminder("Main-hand poison missing", function() return hasValidWeapon() and getPoisonDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHandTooltip, {1, 0.1, 0.1})

@@ -41,10 +41,11 @@ local onEvent = function(self, event)
 end
 
 local lastUpdate = 0
+local updateInterval = config.updateInterval
 local onUpdate = function(self, elapsed)
 	lastUpdate = lastUpdate + elapsed
 	
-	if lastUpdate > config.updateInterval then
+	if lastUpdate > updateInterval then
 		lastUpdate = 0
 		
 		self:UpdateReminders()
@@ -140,6 +141,20 @@ end
 
 function evl_Reminders:PlayerHasBuff(name)
 	return UnitAura("player", name, nil, "HELPFUL")
+end
+
+function evl_Reminders:PlayerHasAnyAura(names, filter)
+	if not filter then
+		filter = "HELPFUL"
+	end
+
+	for _, name in ipairs(names) do
+		if UnitAura("player", name, nil, filter) then
+			return true
+		end
+	end
+	
+	return false
 end
 
 function evl_Reminders:HasTalent(tabIndex, talentIndex, rankRequired)

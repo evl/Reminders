@@ -47,12 +47,12 @@ if select(2, UnitClass("player")) == "SHAMAN" then
 		return quality and quality > 1
 	end
 
-	local mainHandIcon = getEnchantIcon(config.mainHandEnchant)
-	local mainHandAttributes = {type = "spell", spell1 = config.mainHandEnchant, spell2 = config.mainHandSecondaryEnchant}
-	local mainHandTooltip = getEnchantTooltip(config.mainHandEnchant, config.mainHandSecondaryEnchant)
-	local offHandIcon = getEnchantIcon(config.offHandEnchant)
-	local offHandAttributes = {type = "spell", spell1 = config.offHandEnchant, spell2 = config.offHandSecondaryEnchant}
-	local offHandTooltip = getEnchantTooltip(config.offHandEnchant, config.offHandSecondaryEnchant)
+	local mainHandIcon = getEnchantIcon(config.mainHandEnchants[1])
+	local mainHandAttributes = {type = "spell", spell1 = config.mainHandEnchants[1], spell2 = config.mainHandEnchants[2]}
+	local mainHandTooltip = getEnchantTooltip(config.mainHandEnchants[1], config.mainHandEnchants[2])
+	local offHandIcon = getEnchantIcon(config.offHandEnchants[1])
+	local offHandAttributes = {type = "spell", spell1 = config.offHandEnchants[1], spell2 = config.offHandEnchants[2]}
+	local offHandTooltip = getEnchantTooltip(config.offHandEnchants[1], config.offHandEnchants[2])
 
 	evl_Reminders:AddReminder("Main-Hand weapon enchant expiring soon", function() return hasValidWeapon() and getEnchantDuration() > 0 and getEnchantDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
 	evl_Reminders:AddReminder("Main-hand weapon enchant missing", function() return hasValidWeapon() and getEnchantDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHantTooltip, {1, 0.1, 0.1})

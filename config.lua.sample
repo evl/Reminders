@@ -6,18 +6,16 @@ evl_Reminders.config.updateInterval = 1 -- Seconds between reminder updates
 evl_Reminders.config.consumables.foodThresholdTime = 10 -- Number of minutes to warn before a food buff expires
 evl_Reminders.config.consumables.flaskThresholdTime = 5 -- Number of minutes to warn before a flask expires
 
+-- Paladin
+
 -- Rogue
-evl_Reminders.config.rogue.mainHandPoison = "Instant Poison" -- Preferred main-hand poison
-evl_Reminders.config.rogue.offHandPoison = "Deadly Poison" -- Preferred off-hand poison
-evl_Reminders.config.rogue.mainHandSecondaryPoison = "Wound Poison" -- Preferred secondary main-hand poison
-evl_Reminders.config.rogue.offHandSecondaryPoison = "Mind-numbing Poison" -- Preferred secondary off-hand poison
+evl_Reminders.config.rogue.mainHandPoisons = {"Instant Poison", "Wound Poison"} -- Preferred main-hand poisons
+evl_Reminders.config.rogue.offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"} -- Preferred off-hand poison
 evl_Reminders.config.rogue.thresholdTime = 10 -- Number of minutes to warn before a poison expires
 
 -- Shaman
-evl_Reminders.config.shaman.mainHandEnchant = "Windfury Weapon" -- Preferred main-hand enchant
-evl_Reminders.config.shaman.offHandEnchant = "Flametongue Weapon" -- Preferred off-hand enchant
-evl_Reminders.config.shaman.mainHandSecondaryEnchant = "Flametongue Weapon" -- Preferred secondary main-hand enchant
-evl_Reminders.config.shaman.offHandSecondaryEnchant = "Windfury Weapon" -- Preferred secondary off-hand enchant
+evl_Reminders.config.shaman.mainHandEnchants = {"Windfury Weapon", "Flametongue Weapon"} -- Preferred main-hand enchants
+evl_Reminders.config.shaman.offHandEnchants = {"Flametongue Weapon", "Windfury Weapon"} -- Preferred off-hand enchant
 evl_Reminders.config.shaman.thresholdTime = 10 -- Number of minutes to warn before a weapon enchant expires
 
 -- Warlock

@@ -1,5 +1,5 @@
 if select(2, UnitClass("player")) == "MAGE" then	
-	evl_Reminders:AddReminder("Missing Armor", function() return not evl_Reminders:PlayerHasBuff("Molten Armor") and not evl_Reminders:PlayerHasBuff("Mage Armor") end, "Ability_Mage_MoltenArmor", {type = "spell", unit = "player", spell1 = "Molten Armor", spell2 = "Mage Armor"})
+	evl_Reminders:AddReminder("Missing Armor", function() return not evl_Reminders:PlayerHasAnyAura("Molten Armor", "Mage Armor") end, "Ability_Mage_MoltenArmor", {type = "spell", unit = "player", spell1 = "Molten Armor", spell2 = "Mage Armor"})
 
 	local manaGems = {
 		["Rank 1"] = "Mana Agate",
