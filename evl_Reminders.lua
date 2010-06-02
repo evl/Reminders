@@ -8,22 +8,22 @@ evl_Reminders.config = {
 		foodThresholdTime = 10,
 		flaskThresholdTime = 5,
 	},
+	
+	paladin = {
+		auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Shadow Resistance Aura", "Frost Resistance Aura", "Fire Resistance Aura"},
+		seals = {"Seal of Righteousness", "Seal of Justice", "Seal of Light", "Seal of Wisdom", "Seal of Corruption", "Seal of Vengeance"},
+		blessings = {"Blessing of Might", "Blessing of Wisdom", "Blessing of Kings", "Blessing of Sanctuary"}
+	},
 
 	rogue = {
-		mainHandPoison = "Instant Poison",
-		offHandPoison = "Deadly Poison",
-		mainHandSecondaryPoison = "Wound Poison",
-		offHandSecondaryPoison = "Mind-numbing Poison",
-		
+		mainHandPoisons = {"Instant Poison", "Wound Poison"},
+		offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"},
 		thresholdTime = 10,
 	},
 	
 	shaman = {
-		mainHandEnchant = "Windfury Weapon",
-		offHandEnchant = "Flametongue Weapon",
-		mainHandSecEnchant = "Flametongue Weapon",
-		offHandSecEnchant = "Windfury Weapon",
-
+		mainHandEnchants = {"Windfury Weapon", "Flametongue Weapon"},
+		offHandEnchants = {"Flametongue Weapon", "Windfury Weapon"},
 		thresholdTime = 10,
 	},
 	
