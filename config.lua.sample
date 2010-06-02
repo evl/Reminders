@@ -7,6 +7,9 @@ evl_Reminders.config.consumables.foodThresholdTime = 10 -- Number of minutes to 
 evl_Reminders.config.consumables.flaskThresholdTime = 5 -- Number of minutes to warn before a flask expires
 
 -- Paladin
+evl_Reminders.config.paladin.auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Shadow Resistance Aura", "Frost Resistance Aura", "Fire Resistance Aura"} -- List of to warn if missing
+evl_Reminders.config.paladin.seals = {"Seal of Righteousness", "Seal of Justice", "Seal of Light", "Seal of Wisdom", "Seal of Corruption", "Seal of Vengeance"} -- List of seals to warn if missing
+evl_Reminders.config.paladin.blessings = {"Blessing of Might", "Blessing of Wisdom", "Blessing of Kings", "Blessing of Sanctuary"} -- List of blessings to warn if missing
 
 -- Rogue
 evl_Reminders.config.rogue.mainHandPoisons = {"Instant Poison", "Wound Poison"} -- Preferred main-hand poisons

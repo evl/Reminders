@@ -11,6 +11,7 @@ modules\consumables.lua
 modules\deathknight.lua
 modules\druid.lua
 modules\mage.lua
+modules\paladin.lua
 modules\priest.lua
 modules\rogue.lua
 modules\shaman.lua
