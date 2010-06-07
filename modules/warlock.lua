@@ -1,5 +1,6 @@
-if select(2, UnitClass("player")) == "WARLOCK" then	
-	evl_Reminders:AddReminder("Armor missing", function() return not evl_Reminders:PlayerHasBuff("Demon Skin") and not evl_Reminders:PlayerHasBuff("Fel Armor") end, "Spell_Shadow_FelArmour", {type = "spell", unit = "player", spell1 = "Fel Armor", spell2 = "Demon Skin"})
+local config = evl_Reminders.config.warlock
+
+if config.enabled and select(2, UnitClass("player")) == "WARLOCK" then
 
 	local getEnchantDuration = function()
 		local hasMainHandEnchant, mainHandExpiration, _, hasOffHandEnchant, offHandExpiration = GetWeaponEnchantInfo()
@@ -26,6 +27,8 @@ if select(2, UnitClass("player")) == "WARLOCK" then
 
 	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = "Master Firestone", item2 = "Master Spellstone"}
 	local mainHandTooltip = getEnchantTooltip("Master Firestone", "Master Spellstone")
+	
+	evl_Reminders:AddReminder("Missing armor", function() return not evl_Reminders:PlayerHasAnyAura(config.armors) end, "Spell_Shadow_FelArmour", {type = "spell", unit = "player", spell1 = config.armors[1], spell2 = config.armors[2]})
 	evl_Reminders:AddReminder("Weapon enchant expiring soon", function() return hasValidWeapon() and getEnchantDuration() > 0 and getEnchantDuration() <= (evl_Reminders.config.warlock.thresholdTime * 60) end, "INV_Misc_Gem_Bloodstone_01", mainHandAttributes, mainHandTooltip)
 	evl_Reminders:AddReminder("Weapon enchant missing", function() return hasValidWeapon() and getEnchantDuration() == -1 end, "INV_Misc_Gem_Bloodstone_01", mainHandAttributes, mainHantTooltip, {1, 0.1, 0.1})
 end

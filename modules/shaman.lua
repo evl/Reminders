@@ -1,8 +1,6 @@
-if select(2, UnitClass("player")) == "SHAMAN" then	
-	local config = evl_Reminders.config.shaman
+local config = evl_Reminders.config.shaman
 
-	evl_Reminders:AddReminder("Missing Shield", function() return not evl_Reminders:PlayerHasBuff("Water Shield") and not evl_Reminders:PlayerHasBuff("Lightning Shield") end, "Ability_Shaman_WaterShield", {type = "spell", unit = "player", spell1 = "Water Shield", spell2 = "Lightning Shield"})
-
+if config.enabled and select(2, UnitClass("player")) == "SHAMAN" then	
 	--Temporary Weapon Echants
 	local icons = {
 		["Windfury Weapon"] = "Spell_Nature_Cyclone",
@@ -54,6 +52,7 @@ if select(2, UnitClass("player")) == "SHAMAN" then
 	local offHandAttributes = {type = "spell", spell1 = config.offHandEnchants[1], spell2 = config.offHandEnchants[2]}
 	local offHandTooltip = getEnchantTooltip(config.offHandEnchants[1], config.offHandEnchants[2])
 
+	evl_Reminders:AddReminder("Missing Shield", function() return not evl_Reminders:PlayerHasAnyAura(config.shields) end, "Ability_Shaman_WaterShield", {type = "spell", unit = "player", spell1 = config.shields[1], spell2 = config.shields[2]})
 	evl_Reminders:AddReminder("Main-Hand weapon enchant expiring soon", function() return hasValidWeapon() and getEnchantDuration() > 0 and getEnchantDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
 	evl_Reminders:AddReminder("Main-hand weapon enchant missing", function() return hasValidWeapon() and getEnchantDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHantTooltip, {1, 0.1, 0.1})
 	evl_Reminders:AddReminder("Off-Hand weapon enchant expiring soon", function() return hasValidWeapon(true) and getEnchantDuration(true) > 0 and getEnchantDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)

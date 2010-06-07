@@ -5,30 +5,54 @@ evl_Reminders.config = {
 	updateInterval = 1,
 	
 	consumables = {
+		enabled = true,
 		foodThresholdTime = 10,
-		flaskThresholdTime = 5,
+		flaskThresholdTime = 5
+	},
+	
+	druid = {
+		enabled = true
+	},
+	
+	general = {
+		enabled = true
+	},
+	
+	mage = {
+		enabled = true,
+		armors = {"Molten Armor", "Mage Armor"}
 	},
 	
 	paladin = {
+		enabled = true,
 		auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Shadow Resistance Aura", "Frost Resistance Aura", "Fire Resistance Aura"},
 		seals = {"Seal of Righteousness", "Seal of Justice", "Seal of Light", "Seal of Wisdom", "Seal of Corruption", "Seal of Vengeance"},
 		blessings = {"Blessing of Might", "Blessing of Wisdom", "Blessing of Kings", "Blessing of Sanctuary"}
 	},
 
+	priest = {
+		enabled = true
+	},
+	
 	rogue = {
+		enabled = true,
 		mainHandPoisons = {"Instant Poison", "Wound Poison"},
 		offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"},
-		thresholdTime = 10,
+		thresholdTime = 10
 	},
 	
 	shaman = {
+		enabled = true,
+		shields = {"Water Shield", "Lightning Shield"},
 		mainHandEnchants = {"Windfury Weapon", "Flametongue Weapon"},
 		offHandEnchants = {"Flametongue Weapon", "Windfury Weapon"},
-		thresholdTime = 10,
+		thresholdTime = 10
 	},
 	
 	warlock = {
-		thresholdTime = 10,		
+		enabled = true,
+		armors = {"Demon Skin", "Fel Armor"},
+		thresholdTime = 10
 	},
 }
 

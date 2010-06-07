@@ -1,6 +1,6 @@
-if select(2, UnitClass("player")) == "ROGUE" then
-	local config = evl_Reminders.config.rogue
+local config = evl_Reminders.config.rogue
 
+if config.enabled and select(2, UnitClass("player")) == "ROGUE" then
 	-- Poisons
 	local poisons = {
 		["Anesthetic Poison"] = {
