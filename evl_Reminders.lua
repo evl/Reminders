@@ -182,6 +182,16 @@ function evl_Reminders:PlayerHasAnyAura(names, filter)
 	return false
 end
 
+function evl_Reminders:PlayerInPVEInstance()
+	isInstance, instanceType = IsInInstance()
+	
+	if isInstance then
+		return instanceType == "party" or instanceType == "raid"
+	end
+	
+	return false
+end
+
 function evl_Reminders:HasTalent(tabIndex, talentIndex, rankRequired)
 	return select(5, GetTalentInfo(tabIndex, talentIndex)) >= (rankRequired or 1)
 end
