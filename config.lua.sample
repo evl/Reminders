@@ -1,45 +1,48 @@
-evl_Reminders.config.scale = 1 -- Icon scale (default size is 36x36)
-evl_Reminders.config.position = {"CENTER", UIParent, "CENTER", 300, 0} -- Anchor position, see http://www.wowwiki.com/API_Region_SetPoint
-evl_Reminders.config.updateInterval = 1 -- Seconds between reminder updates
+local addonName, addon = ...
+local config = addon.config
+
+addon.config.scale = 1 -- Icon scale (default size is 36x36)
+addon.config.position = {"CENTER", UIParent, "CENTER", 300, 0} -- Anchor position, see http://www.wowwiki.com/API_Region_SetPoint
+addon.config.updateInterval = 1 -- Seconds between reminder updates
 
 -- General reminders
-evl_Reminders.config.general.enabled = true
+addon.config.general.enabled = true
 
 -- Consumables
-evl_Reminders.config.consumables.enabled = true
-evl_Reminders.config.consumables.foodThresholdTime = 10 -- Number of minutes to warn before a food buff expires
-evl_Reminders.config.consumables.flaskThresholdTime = 5 -- Number of minutes to warn before a flask expires
+addon.config.consumables.enabled = true
+addon.config.consumables.foodThresholdTime = 10 -- Number of minutes to warn before a food buff expires
+addon.config.consumables.flaskThresholdTime = 5 -- Number of minutes to warn before a flask expires
 
 -- Druid
-evl_Reminders.config.druid.enabled = true
+addon.config.druid.enabled = true
 
 -- Mage
-evl_Reminders.config.mage.enabled = true
-evl_Reminders.config.mage.armors = {"Molten Armor", "Mage Armor"} -- List of armors
+addon.config.mage.enabled = true
+addon.config.mage.armors = {"Molten Armor", "Mage Armor"} -- List of armors
 
 -- Paladin
-evl_Reminders.config.paladin.auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Shadow Resistance Aura", "Frost Resistance Aura", "Fire Resistance Aura"} -- List of to warn if missing
-evl_Reminders.config.paladin.seals = {"Seal of Command", "Seal of Righteousness", "Seal of Justice", "Seal of Light", "Seal of Wisdom", "Seal of Corruption", "Seal of Vengeance"} -- List of seals to warn if missing
-evl_Reminders.config.paladin.blessings = {"Blessing of Might", "Blessing of Wisdom", "Blessing of Kings", "Blessing of Sanctuary"} -- List of blessings to warn if missing
-evl_Reminders.config.paladin.righteousFury = true
+addon.config.paladin.auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Shadow Resistance Aura", "Frost Resistance Aura", "Fire Resistance Aura"} -- List of to warn if missing
+addon.config.paladin.seals = {"Seal of Command", "Seal of Righteousness", "Seal of Justice", "Seal of Light", "Seal of Wisdom", "Seal of Corruption", "Seal of Vengeance"} -- List of seals to warn if missing
+addon.config.paladin.blessings = {"Blessing of Might", "Blessing of Wisdom", "Blessing of Kings", "Blessing of Sanctuary"} -- List of blessings to warn if missing
+addon.config.paladin.righteousFury = true
 
 -- Priest
-evl_Reminders.config.priest.enabled = true
+addon.config.priest.enabled = true
 
 -- Rogue
-evl_Reminders.config.rogue.enabled = true
-evl_Reminders.config.rogue.mainHandPoisons = {"Instant Poison", "Wound Poison"} -- Preferred main-hand poisons
-evl_Reminders.config.rogue.offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"} -- Preferred off-hand poison
-evl_Reminders.config.rogue.thresholdTime = 10 -- Number of minutes to warn before a poison expires
+addon.config.rogue.enabled = true
+addon.config.rogue.mainHandPoisons = {"Instant Poison", "Wound Poison"} -- Preferred main-hand poisons
+addon.config.rogue.offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"} -- Preferred off-hand poison
+addon.config.rogue.thresholdTime = 10 -- Number of minutes to warn before a poison expires
 
 -- Shaman
-evl_Reminders.config.shaman.enabled = true
-evl_Reminders.config.shaman.shields = {"Water Shield", "Lightning Shield"}
-evl_Reminders.config.shaman.mainHandEnchants = {"Windfury Weapon", "Flametongue Weapon"} -- Preferred main-hand enchants
-evl_Reminders.config.shaman.offHandEnchants = {"Flametongue Weapon", "Windfury Weapon"} -- Preferred off-hand enchant
-evl_Reminders.config.shaman.thresholdTime = 10 -- Number of minutes to warn before a weapon enchant expires
+addon.config.shaman.enabled = true
+addon.config.shaman.shields = {"Water Shield", "Lightning Shield"}
+addon.config.shaman.mainHandEnchants = {"Windfury Weapon", "Flametongue Weapon"} -- Preferred main-hand enchants
+addon.config.shaman.offHandEnchants = {"Flametongue Weapon", "Windfury Weapon"} -- Preferred off-hand enchant
+addon.config.shaman.thresholdTime = 10 -- Number of minutes to warn before a weapon enchant expires
 
 -- Warlock
-evl_Reminders.config.warlock.enabled = true
-evl_Reminders.config.warlock.armors = {"Demon Skin", "Fel Armor"}
-evl_Reminders.config.warlock.thresholdTime = 10 -- Number of minutes to warn before a weapon enchant expires
+addon.config.warlock.enabled = true
+addon.config.warlock.armors = {"Demon Skin", "Fel Armor"}
+addon.config.warlock.thresholdTime = 10 -- Number of minutes to warn before a weapon enchant expires

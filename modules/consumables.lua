@@ -1,4 +1,5 @@
-local config = evl_Reminders.config.consumables
+local addonName, addon = ...
+local config = addon.config.consumables
 
 if config.enabled then
 	local hasAuraDuration = function(name, duration)
@@ -23,6 +24,6 @@ if config.enabled then
 		end
 	end
 
-	evl_Reminders:AddReminder("Food buff expiring soon", function() return hasAuraDuration("Well Fed", config.foodThresholdTime * 60) end, "spell_misc_food")
-	evl_Reminders:AddReminder("Flask expiring soon", function() return hasFlaskDuration(config.flaskThresholdTime * 60) end, "inv_alchemy_endlessflask_06")
+	addon:AddReminder("Food buff expiring soon", function() return hasAuraDuration("Well Fed", config.foodThresholdTime * 60) end, "spell_misc_food")
+	addon:AddReminder("Flask expiring soon", function() return hasFlaskDuration(config.flaskThresholdTime * 60) end, "inv_alchemy_endlessflask_06")
 end

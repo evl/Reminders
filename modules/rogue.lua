@@ -1,6 +1,7 @@
-local config = evl_Reminders.config.rogue
+local addonName, addon = ...
+local config = addon.config.rogue
 
-if config.enabled and select(2, UnitClass("player")) == "ROGUE" then
+if config.enabled and addon.playerClass == "ROGUE" then
 	-- Poisons
 	local poisons = {
 		["Anesthetic Poison"] = {
@@ -133,8 +134,8 @@ if config.enabled and select(2, UnitClass("player")) == "ROGUE" then
 	local offHandAttributes = {type = "item", ["target-slot"] = 17, item1 = getPoisonItemString(config.offHandPoisons[1]), item2 = getPoisonItemString(config.offHandPoisons[2])}
 	local offHandTooltip = getPoisonTooltip(config.offHandPoisons[1], config.offHandPoisons[2])
 	
-	evl_Reminders:AddReminder("Main-hand poison expiring soon", function() return hasValidWeapon() and getPoisonDuration() > 0 and getPoisonDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
-	evl_Reminders:AddReminder("Main-hand poison missing", function() return hasValidWeapon() and getPoisonDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHandTooltip, {1, 0.1, 0.1})
-	evl_Reminders:AddReminder("Off-hand poison expiring soon", function() return hasValidWeapon(true) and getPoisonDuration(true) > 0 and getPoisonDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)
-	evl_Reminders:AddReminder("Off-hand poison missing", function() return hasValidWeapon(true) and getPoisonDuration(true) == -1 end, offHandIcon, offHandAttributes, offHandTooltip, {1, 0.1, 0.1})
+	addon:AddReminder("Main-hand poison expiring soon", function() return hasValidWeapon() and getPoisonDuration() > 0 and getPoisonDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
+	addon:AddReminder("Main-hand poison missing", function() return hasValidWeapon() and getPoisonDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHandTooltip, {1, 0.1, 0.1})
+	addon:AddReminder("Off-hand poison expiring soon", function() return hasValidWeapon(true) and getPoisonDuration(true) > 0 and getPoisonDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)
+	addon:AddReminder("Off-hand poison missing", function() return hasValidWeapon(true) and getPoisonDuration(true) == -1 end, offHandIcon, offHandAttributes, offHandTooltip, {1, 0.1, 0.1})
 end

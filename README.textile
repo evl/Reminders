@@ -49,6 +49,6 @@ h2. Customization
 
 You can add your own custom reminders with the following syntax:
 
-<pre>evl_Reminders:AddReminder(name, event, callback, icon, attributes, tooltip, color)</pre>
+<pre>addon:AddReminder(name, event, callback, icon, attributes, tooltip, color)</pre>
 
 See existing modules for in-depth examples.

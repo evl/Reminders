@@ -1,5 +1,6 @@
-evl_Reminders = CreateFrame("Frame", nil, UIParent)
-evl_Reminders.config = {
+local addonName, addon = ...
+
+addon.config = {
 	scale = 1,
 	position = {"CENTER", UIParent, "CENTER", 300, 0},
 	updateInterval = 1,
@@ -57,12 +58,15 @@ evl_Reminders.config = {
 	},
 }
 
-local config = evl_Reminders.config
+addon.playerClass = select(2, UnitClass("player"))
+
+local config = addon.config
+local frame = CreateFrame("Frame", nil, UIParent)
 local reminders = {}
 
 local onEvent = function(self, event)
-	self:SetScale(config.scale)
-	self:SetPoint(unpack(config.position))
+	frame:SetScale(config.scale)
+	frame:SetPoint(unpack(config.position))
 end
 
 local lastUpdate = 0
@@ -73,7 +77,7 @@ local onUpdate = function(self, elapsed)
 	if lastUpdate > updateInterval then
 		lastUpdate = 0
 		
-		self:UpdateReminders()
+		addon:UpdateReminders()
 	end
 end
 
@@ -130,7 +134,7 @@ local disableReminder = function(self, reminder, reactivateTime)
 end
 
 local menu
-local menuFrame = CreateFrame("Frame", "evl_RemindersMenu", UIParent, "UIDropDownMenuTemplate")
+local menuFrame = CreateFrame("Frame", addonName .. "Menu", UIParent, "UIDropDownMenuTemplate")
 local onClick = function(self)
 	menu = {
 		{text = self.name, isTitle = true},
@@ -142,7 +146,7 @@ local onClick = function(self)
 end
 
 -- Utility functions
-function evl_Reminders:IsInPartyWith(class)
+function addon:IsInPartyWith(class)
 	local numMembers = GetNumPartyMembers()
 
 	if numMembers then
@@ -158,17 +162,17 @@ function evl_Reminders:IsInPartyWith(class)
 	return false
 end
 
-function evl_Reminders:IsBigWigsModuleActive(name)
+function addon:IsBigWigsModuleActive(name)
 	local bw = _G.BigWigs
 
 	return bw and bw:IsModuleActive(name)
 end
 
-function evl_Reminders:PlayerHasBuff(name)
+function addon:PlayerHasBuff(name)
 	return UnitAura("player", name, nil, "HELPFUL")
 end
 
-function evl_Reminders:PlayerHasAnyAura(names, filter)
+function addon:PlayerHasAnyAura(names, filter)
 	if not filter then
 		filter = "HELPFUL"
 	end
@@ -182,7 +186,7 @@ function evl_Reminders:PlayerHasAnyAura(names, filter)
 	return false
 end
 
-function evl_Reminders:PlayerInPVEInstance()
+function addon:PlayerInPVEInstance()
 	isInstance, instanceType = IsInInstance()
 	
 	if isInstance then
@@ -192,11 +196,11 @@ function evl_Reminders:PlayerInPVEInstance()
 	return false
 end
 
-function evl_Reminders:HasTalent(tabIndex, talentIndex, rankRequired)
+function addon:HasTalent(tabIndex, talentIndex, rankRequired)
 	return select(5, GetTalentInfo(tabIndex, talentIndex)) >= (rankRequired or 1)
 end
 
-function evl_Reminders:HasGlyph(id)
+function addon:HasGlyph(id)
 	for i = 1, 6 do
 		local _, _, glyphSpell = GetGlyphSocketInfo(i)
 		
@@ -208,9 +212,9 @@ function evl_Reminders:HasGlyph(id)
 	return false
 end
 
-function evl_Reminders:AddReminder(name, callback, icon, attributes, tooltip, color)
+function addon:AddReminder(name, callback, icon, attributes, tooltip, color)
 	local buttonName = "ReminderButton" .. #reminders
-	local frame = CreateFrame("Button", buttonName, self, "SecureActionButtonTemplate, ActionButtonTemplate")
+	local frame = CreateFrame("Button", buttonName, frame, "SecureActionButtonTemplate, ActionButtonTemplate")
 
 	frame.name = name
 	frame.callback = callback
@@ -248,7 +252,7 @@ function evl_Reminders:AddReminder(name, callback, icon, attributes, tooltip, co
 	return frame
 end
 
-function evl_Reminders:UpdateReminders()
+function addon:UpdateReminders()
 	local result
 	local previousReminder
 	local inCombat = InCombatLockdown()
@@ -268,7 +272,7 @@ function evl_Reminders:UpdateReminders()
 				if previousReminder then
 					reminder:SetPoint("LEFT", previousReminder, "RIGHT", 5, 0)
 				else
-					reminder:SetPoint("TOPLEFT", self)
+					reminder:SetPoint("TOPLEFT", frame)
 				end
 
 				reminder:SetAlpha(1)
@@ -284,9 +288,9 @@ function evl_Reminders:UpdateReminders()
 	end
 end
 
-evl_Reminders:SetWidth(36)
-evl_Reminders:SetHeight(36)
-evl_Reminders:SetScript("OnEvent", onEvent)
-evl_Reminders:SetScript("OnUpdate", onUpdate)
+frame:SetWidth(36)
+frame:SetHeight(36)
+frame:SetScript("OnEvent", onEvent)
+frame:SetScript("OnUpdate", onUpdate)
 
-evl_Reminders:RegisterEvent("PLAYER_ENTERING_WORLD")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")
