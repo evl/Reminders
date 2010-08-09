@@ -19,6 +19,12 @@ h2. Modules
 *Mage*
 * Armor missing (Molten Armor or Mage Armor)
 
+*Paladin*
+* No active aura
+* No active seal
+* Missing blessing
+* Missing Righteous Fury
+
 *Priest*
 * Missing Power Word: Fortitude
 * Missing Inner Fire
