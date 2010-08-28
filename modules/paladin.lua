@@ -7,6 +7,6 @@ if config.enabled and addon.playerClass == "PALADIN" then
 	addon:AddReminder("Missing blessing", function() return not addon:PlayerHasAnyAura(config.blessings, "PLAYER|HELPFUL") end, "Spell_Holy_GreaterBlessingOfKings", {type = "spell", unit = "player", spell1 = config.blessings[1], spell2 = config.blessings[2]})
 	
 	if config.righteousFury then
-		addon:AddReminder("Missing Righteous Fury", function() return addon:PlayerInPVEInstance() and not addon:PlayerHasBuff("Righteous Fury") end, "Spell_Holy_SealOfFury", {type = "spell", unit = "player", spell = "Righteous Fury"})
+		addon:AddReminder("Missing Righteous Fury", function() return addon:PlayerInPVEInstance() and ((addon:HasTalent(2, 26) or UnitLevel("player") < 80) and not addon:PlayerHasBuff("Righteous Fury")) end, "Spell_Holy_SealOfFury", {type = "spell", unit = "player", spell = "Righteous Fury"})
 	end
 end
