@@ -28,8 +28,15 @@ if config.enabled and addon.playerClass == "WARLOCK" then
 	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = "Master Firestone", item2 = "Master Spellstone"}
 	local mainHandTooltip = getEnchantTooltip("Master Firestone", "Master Spellstone")
 	
+	local hasDemon = function()
+		local hasPetSpells, petType = HasPetSpells()
+		return hasPetSpells and petType == "DEMON"
+	end
+	
 	addon:AddReminder("Missing armor", function() return not addon:PlayerHasAnyAura(config.armors) end, "Spell_Shadow_FelArmour", {type = "spell", unit = "player", spell1 = config.armors[1], spell2 = config.armors[2]})
 	addon:AddReminder("Weapon enchant expiring soon", function() return hasValidWeapon() and getEnchantDuration() > 0 and getEnchantDuration() <= (addon.config.warlock.thresholdTime * 60) end, "INV_Misc_Gem_Bloodstone_01", mainHandAttributes, mainHandTooltip)
 	addon:AddReminder("Weapon enchant missing", function() return hasValidWeapon() and getEnchantDuration() == -1 end, "INV_Misc_Gem_Bloodstone_01", mainHandAttributes, mainHantTooltip, {1, 0.1, 0.1})
+	
+	addon:AddReminder("Missing Soul Link", function() return addon:HasTalent(2, 9) and not addon:PlayerHasBuff("Soul Link") and hasDemon() end, "Spell_Shadow_GatherShadows", {type = "spell", spell = "Soul Link", unit = "player"})
 end
 
