@@ -25,8 +25,8 @@ if config.enabled and addon.playerClass == "WARLOCK" then
 		return quality and quality > 1 
 	end
 
-	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = "Master Firestone", item2 = "Master Spellstone"}
-	local mainHandTooltip = getEnchantTooltip("Master Firestone", "Master Spellstone")
+	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = "Grand Firestone", item2 = "Grand Spellstone"}
+	local mainHandTooltip = getEnchantTooltip("Grand Firestone", "Grand Spellstone")
 	
 	local hasDemon = function()
 		local hasPetSpells, petType = HasPetSpells()
