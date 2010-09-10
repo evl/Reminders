@@ -3,7 +3,6 @@ local addonName, addon = ...
 addon.config = {
 	scale = 1,
 	position = {"CENTER", UIParent, "CENTER", 300, 0},
-	updateInterval = 1,
 	
 	consumables = {
 		enabled = true,
@@ -64,27 +63,39 @@ local config = addon.config
 local frame = CreateFrame("Frame", nil, UIParent)
 local reminders = {}
 
-local onEvent = function(self, event)
-	frame:SetScale(config.scale)
-	frame:SetPoint(unpack(config.position))
+local initialized
+local onEvent = function(self, event, ...)
+	if initialized then
+		addon:UpdateReminder(self, event, ...)
+	elseif self == frame and event == "PLAYER_ENTERING_WORLD" then
+		print("Initialized.")
+		initialized = true
+
+		frame:SetWidth(36)
+		frame:SetHeight(36)
+		frame:SetScale(config.scale)
+		frame:SetPoint(unpack(config.position))
+
+		addon:UpdateAllReminders()
+	end
 end
 
 local lastUpdate = 0
-local updateInterval = config.updateInterval
+local updateInterval = 10
 local onUpdate = function(self, elapsed)
 	lastUpdate = lastUpdate + elapsed
 	
 	if lastUpdate > updateInterval then
 		lastUpdate = 0
-		
-		addon:UpdateReminders()
+
+		addon:UpdateReminder(self)
 	end
 end
 
 local onEnter = function(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	GameTooltip:SetWidth(250)
-	GameTooltip:AddLine(self.name)
+	GameTooltip:AddLine(self.title)
 
 	if self.tooltip then
 		GameTooltip:AddLine(" ")
@@ -128,169 +139,126 @@ local onLeave = function(self)
 	GameTooltip:Hide()
 end
 
-local disableReminder = function(self, reminder, reactivateTime)
-	reminder.active = false
-	reminder.reactivateTime = reactivateTime and (GetTime() + reactivateTime) or 0
+local suppressReminder = function(self, reminder, suppressTime)
+	reminder.suppressed = true
+	reminder.suppressTime = suppressTime and (GetTime() + suppressTime) or 0
 end
 
 local menu
 local menuFrame = CreateFrame("Frame", addonName .. "Menu", UIParent, "UIDropDownMenuTemplate")
-local onClick = function(self)
+local onShowMenu = function(self)
 	menu = {
-		{text = self.name, isTitle = true},
-		{text = "Suppress for 5 minutes", func = disableReminder, arg1 = self, arg2 = 300},
+		{text = self.title, isTitle = true},
+		{text = "Suppress for 5 minutes", func = disableReminder, arg1 = self, arg2 = 5 * 60},
+		{text = "Suppress for 30 minutes", func = disableReminder, arg1 = self, arg2 = 30 * 60},
 		{text = "Disable for this session", func = disableReminder, arg1 = self}
 	}
 
 	EasyMenu(menu, menuFrame, "cursor", nil, nil, "MENU")
 end
 
--- Utility functions
-function addon:IsInPartyWith(class)
-	local numMembers = GetNumPartyMembers()
-
-	if numMembers then
-		for i = 1, numMembers do
-			local unit = "party" .. i
-
-			if not UnitIsPlayer("unit") and select(2, UnitClass(unit)) == class then
-				return true
-			end
-		end
-	end
-
-	return false
-end
-
-function addon:IsBigWigsModuleActive(name)
-	local bw = _G.BigWigs
-
-	return bw and bw:IsModuleActive(name)
-end
-
-function addon:PlayerHasBuff(name)
-	return UnitAura("player", name, nil, "HELPFUL")
-end
-
-function addon:PlayerHasAnyAura(names, filter)
-	if not filter then
-		filter = "HELPFUL"
-	end
-
-	for _, name in ipairs(names) do
-		if UnitAura("player", name, nil, filter) then
-			return true
-		end
-	end
-	
-	return false
-end
-
-function addon:PlayerInPVEInstance()
-	isInstance, instanceType = IsInInstance()
-	
-	if isInstance then
-		return instanceType == "party" or instanceType == "raid"
-	end
-	
-	return false
-end
-
-function addon:HasTalent(tabIndex, talentIndex, rankRequired)
-	return select(5, GetTalentInfo(tabIndex, talentIndex)) >= (rankRequired or 1)
-end
-
-function addon:HasGlyph(id)
-	for i = 1, 6 do
-		local _, _, glyphSpell = GetGlyphSocketInfo(i)
-		
-		if glyphSpell == id then
-			return true
-		end
-	end
-	
-	return false
-end
-
-function addon:AddReminder(name, callback, icon, attributes, tooltip, color)
+function addon:AddReminder(name, events, callback, icon, attributes, tooltip, color)
 	local buttonName = "ReminderButton" .. #reminders
-	local frame = CreateFrame("Button", buttonName, frame, "SecureActionButtonTemplate, ActionButtonTemplate")
-
-	frame.name = name
-	frame.callback = callback
-	frame.attributes = attributes
-	frame.tooltip = tooltip
-	frame.active = true
-	frame.reactivateTime = 0
-
-	local texture = frame:CreateTexture(nil, "BACKGROUND")
-	texture:SetAllPoints(frame)
-	texture:SetTexture("Interface\\Icons\\" .. (icon or "Temp"))
+	local reminder = CreateFrame("Button", buttonName, frame, "SecureActionButtonTemplate, ActionButtonTemplate")
+	
+	local texture = reminder:CreateTexture(nil, "BACKGROUND")
+	texture:SetAllPoints(reminder)
 	texture:SetTexCoord(.07, .93, .07, .93)
+
+	_G[buttonName .. "Icon"]:SetTexture(texture)
+	
+	reminder.title = name
+	reminder.update = callback
+	reminder.icon = icon
+	reminder.tooltip = tooltip
+	reminder.color = color
+
+	reminder.active = nil
+	reminder.suppressed = false
+	reminder.suppressTime = 0
+	
+	reminder.setColor = function (...) texture:SetVertexColor(...) end
+	reminder.setIcon = function(...) texture:SetTexture(...) end
+	
+	reminder.setIcon("Interface\\Icons\\" .. (icon or "Temp"))
 	
 	if color then
-		texture:SetVertexColor(unpack(color))
+		reminder.setColor(unpack(color))
 	end
 
-	_G[frame:GetName() .. "Icon"]:SetTexture(texture)
-
-	frame:RegisterForClicks("AnyUp")
-	frame:SetScript("OnEnter", onEnter)
-	frame:SetScript("OnLeave", onLeave)
+	reminder:RegisterForClicks("AnyUp")
+	reminder:SetScript("OnEnter", onEnter)
+	reminder:SetScript("OnLeave", onLeave)
+	reminder:SetScript("OnEvent", onEvent)
+	
+	for _, event in pairs(type(events) == "string" and {events} or events) do
+		reminder:RegisterEvent(event)
+	end
 
 	if attributes then
 		for key, value in pairs(attributes) do
-			frame:SetAttribute(key, value)
+			reminder:SetAttribute(key, value)
 		end
 	end
 
-	frame:SetAttribute("alt-type*", "showmenu")
-	frame.showmenu = onClick
+	reminder:SetAttribute("alt-type*", "showmenu")
+	reminder.showmenu = onShowMenu
 	
-	table.insert(reminders, frame)
-
-	return frame
+	table.insert(reminders, reminder)
+	
+	return reminder
 end
 
-function addon:UpdateReminders()
-	local result
-	local previousReminder
+function addon:UpdateReminder(reminder, event, ...)
+	--if not reminder.suppressed then
+		local previousState = reminder.active
+		reminder.active = reminder.update(reminder, event, ...)
+		
+		--if reminder.active and not previousState then
+			self:UpdateLayout()
+		--end
+	--end
+end
+
+function addon:UpdateLayout()
 	local inCombat = InCombatLockdown()
+	local previousReminder
 
-	for _, reminder in ipairs(reminders) do
-		if not reminder.active and (reminder.reactivateTime > 0 and GetTime() >= reminder.reactivateTime) then
-			reminder.active = true
-			reminder.reactivateTime = 0
-		end
-
-		result = reminder.active and reminder.callback()
-
-		if result then
+	for _, reminder in pairs(reminders) do
+		if reminder.active then
 			if not inCombat then
-				reminder:ClearAllPoints()
-
 				if previousReminder then
-					reminder:SetPoint("LEFT", previousReminder, "RIGHT", 5, 0)
+					reminder:SetPoint("TOPLEFT", previousReminder, "TOPRIGHT", 5, 0)
 				else
 					reminder:SetPoint("TOPLEFT", frame)
 				end
 
-				reminder:SetAlpha(1)
 				reminder:Show()
 			end
 
+			reminder:SetAlpha(1)
+			
 			previousReminder = reminder
-		elseif inCombat then
-			reminder:SetAlpha(0)
 		else
-			reminder:Hide()
-		end
+			if not inCombat then
+				reminder:Hide()
+			end
+			
+			reminder:SetAlpha(0)
+		end	
 	end
 end
 
-frame:SetWidth(36)
-frame:SetHeight(36)
+function addon:UpdateAllReminders()
+	print("Updating", #reminders, "reminders.")
+	
+	for _, reminder in pairs(reminders) do
+		reminder.active = reminder.update(reminder, "UPDATE_ALL_REMINDERS")
+	end
+	
+	self:UpdateLayout()
+end
+
 frame:SetScript("OnEvent", onEvent)
-frame:SetScript("OnUpdate", onUpdate)
 
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
