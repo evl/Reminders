@@ -4,6 +4,7 @@
 
 evl_Reminders.lua
 config.lua
+utilities.lua
 
 modules\general.lua
 modules\consumables.lua
