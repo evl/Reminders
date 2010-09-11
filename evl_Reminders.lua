@@ -166,7 +166,7 @@ function addon:AddReminder(name, events, callback, icon, color, attributes, tool
 
 	reminder.showMenu = showReminderMenu
 	reminder.setColor = function(...) texture:SetVertexColor(...) end
-	reminder.setIcon = function(icon) texture:SetTexture((icon:find("\\") and "" or "Interface\\Icons\\") .. icon) end
+	reminder.setIcon = function(icon) texture:SetTexture(((icon and icon:find("\\")) and "" or "Interface\\Icons\\") .. (icon or "Temp")) end
 	
 	for _, event in pairs(type(events) == "string" and {events} or events) do
 		reminder:RegisterEvent(event)
@@ -176,11 +176,15 @@ function addon:AddReminder(name, events, callback, icon, color, attributes, tool
 		for key, value in pairs(attributes) do
 			reminder:SetAttribute(key, value)
 			
-			if not icon and (key == "spell" or key == "spell1") then
-				icon = select(3, GetSpellInfo(value))
-				
-				if addon.debug then
-					print("Resolved missing icon:", icon, "for spell:", value)
+			if not icon then
+				if key == "spell" or key == "spell1" then
+					icon = select(3, GetSpellInfo(value))
+				elseif key == "item" or key == "item1" then
+					icon = GetItemIcon(value)
+				end
+
+				if icon and addon.debug then
+					print("Resolved missing icon:", icon, "for:", value)
 				end
 			end
 		end
