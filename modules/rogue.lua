@@ -3,7 +3,6 @@ local config = addon.config.rogue
 
 if config.enabled and addon.playerClass == "ROGUE" then
 	-- Poisons
-	local mainHandSlot, offHandSlot = GetInventorySlotInfo("MainHandSlot"), GetInventorySlotInfo("SecondaryHandSlot")
 	local poisons = {
 		["Anesthetic Poison"] = {
 			icon = "Spell_Nature_SlowPoison",
@@ -111,31 +110,45 @@ if config.enabled and addon.playerClass == "ROGUE" then
 
 		return tooltip
 	end
-
-	local hasEnchantableWeapon = function(slot)
-		local link = GetInventoryItemLink("player", slot)
-		
-		if link then
-			local equipSlot = _G[select(9, GetItemInfo(link))]
-
-			return equipSlot == INVTYPE_WEAPON or equipSlot == (slot == mainHandSlot and INVTYPE_WEAPONMAINHAND or INVTYPE_WEAPONOFFHAND)
+	
+	local onEvent = function(self, event, unit)
+		if not (event == "UNIT_INVENTORY_CHANGED" and unit ~= "player") then
+			local slot = self:GetAttribute("target-slot")
+			local hasEnchant, expiration = select(slot == 16 and 1 or 4, GetWeaponEnchantInfo())
+			
+			if hasEnchant then
+				local timeLeft = expiration / 1000
+				
+				if timeLeft < config.thresholdTime * 60 then
+					self.title = self.name .." expiring in " .. SecondsToTime(timeLeft, nil, true):lower()
+					self.setColor(1, 1, 1)
+					
+					return true
+				end
+			else
+				local validWeapon = addon:HasEnchantableWeapon(slot)
+				
+				-- If we just lost or applied an enchant we need to poll the weapon enchant info for a while until we're sure it's changed
+				if event == "UNIT_INVENTORY_CHANGED" and validWeapon then
+					local poller = self.poller or addon:CreatePoller(self, 2)
+					poller.elapsed = 0
+				end
+				
+				if validWeapon then
+					self.title = self.name .." missing"
+					self.setColor(1, 0.1, 0.1)
+					
+					return true
+				end
+			end
 		end
 	end
-	
+		
 	local mainHandIcon, offHandIcon = getPoisonIcon(config.mainHandPoisons[1]), getPoisonIcon(config.offHandPoisons[1])
 	local mainHandTooltip, offHandTooltip = getPoisonTooltip(config.mainHandPoisons[1], config.mainHandPoisons[2]), getPoisonTooltip(config.offHandPoisons[1], config.offHandPoisons[2])
 	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = getPoisonItemString(config.mainHandPoisons[1]), item2 = getPoisonItemString(config.mainHandPoisons[2])}
 	local offHandAttributes = {type = "item", ["target-slot"] = 17, item1 = getPoisonItemString(config.offHandPoisons[1]), item2 = getPoisonItemString(config.offHandPoisons[2])}
 
-	local poisonCallback = function(self, event, unit)
-		if unit == "player" or event == "UPDATE_ALL_REMINDERS" then
-			local slot = self:GetAttribute("target-slot")
-			local hasEnchant, expiration = select(slot == mainHandSlot and 1 or 4, GetWeaponEnchantInfo())
-			
-			return not hasEnchant and hasEnchantableWeapon(slot)
-		end
-	end
-	
-	addon:AddReminder("Main hand poison", "UNIT_INVENTORY_CHANGED", poisonCallback, mainHandIcon, mainHandAttributes, mainHandTooltip)
-	addon:AddReminder("Off hand poison", "UNIT_INVENTORY_CHANGED", poisonCallback, offHandIcon, offHandAttributes, offHandTooltip)
+	addon:AddReminder("Main hand poison", "UNIT_INVENTORY_CHANGED", onEvent, mainHandIcon, nil, mainHandAttributes, mainHandTooltip)
+	addon:AddReminder("Off hand poison", "UNIT_INVENTORY_CHANGED", onEvent, offHandIcon, nil, offHandAttributes, offHandTooltip)
 end
