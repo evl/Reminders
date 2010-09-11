@@ -155,7 +155,7 @@ function addon:AddReminder(name, events, callback, icon, color, attributes, tool
 
 	reminder.callback = callback
 	reminder.active = nil
-	reminder.activeWhileResting = activeWhileResting
+	reminder.activeWhileResting = activeWhileResting or addon.debug
 	reminder.suppressed = false
 	reminder.suppressTime = 0
 	
@@ -197,7 +197,9 @@ function addon:UpdateReminderState(reminder, event, ...)
 	
 	reminder.active = not reminder.suppressed and (reminder.activeWhileResting or not IsResting()) and reminder.callback(reminder, event, ...)
 	
-	--print(event, reminder.title or reminder.name, previousState, "=>", reminder.active, "resting:", reminder.activeWhileResting, "suppresed: ", reminder.suppresed)
+	if addon.debug then
+		print(event, reminder.title or reminder.name, previousState, "=>", reminder.active, "resting:", reminder.activeWhileResting, "suppresed: ", reminder.suppresed)
+	end
 	
 	return previousState, reminder.active
 end
