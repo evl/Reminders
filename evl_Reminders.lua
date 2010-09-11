@@ -70,7 +70,7 @@ end
 local onEnter = function(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	GameTooltip:SetWidth(250)
-	GameTooltip:AddLine(self.title)
+	GameTooltip:AddLine(self.title or self.name)
 
 	if self.tooltip then
 		GameTooltip:AddLine(" ")
@@ -117,29 +117,27 @@ end
 local suppressReminder = function(self, reminder, suppressTime)
 	reminder.suppressed = true
 	reminder.suppressTime = suppressTime and (GetTime() + suppressTime) or 0
+	
+	addon:UpdateReminder(reminder, "UPDATE_SUPPRESS")
 end
 
 local menu
 local menuFrame = CreateFrame("Frame", addonName .. "Menu", UIParent, "UIDropDownMenuTemplate")
 local showReminderMenu = function(self)
 	menu = {
-		{text = self.title, isTitle = true},
-		{text = "Suppress for 5 minutes", func = disableReminder, arg1 = self, arg2 = 5 * 60},
-		{text = "Suppress for 30 minutes", func = disableReminder, arg1 = self, arg2 = 30 * 60},
-		{text = "Disable for this session", func = disableReminder, arg1 = self}
+		{text = self.title or self.name, isTitle = true},
+		{text = "Suppress for 5 minutes", func = suppressReminder, arg1 = self, arg2 = 5 * 60},
+		{text = "Suppress for 30 minutes", func = suppressReminder, arg1 = self, arg2 = 30 * 60},
+		{text = "Disable for this session", func = suppressReminder, arg1 = self}
 	}
 
 	EasyMenu(menu, menuFrame, "cursor", nil, nil, "MENU")
 end
 
-function addon:AddReminder(name, events, callback, icon, attributes, tooltip, parameters)
+function addon:AddReminder(name, events, callback, icon, color, attributes, tooltip, activeWhileResting)
 	if type(events) == "function" then
 		print("WARNING: Reminder", name, " is in deprecated format.")
 		return
-	end
-	
-	if not parameters then
-		parameters = {}
 	end
 	
 	local buttonName = "ReminderButton" .. #reminders
@@ -152,13 +150,12 @@ function addon:AddReminder(name, events, callback, icon, attributes, tooltip, pa
 
 	_G[buttonName .. "Icon"]:SetTexture(texture)
 	
-	-- icon, attributes, tooltip, color, activeWhileResting
-	reminder.title = name
+	reminder.name = name
 	reminder.tooltip = tooltip
 
 	reminder.callback = callback
 	reminder.active = nil
-	reminder.activeWhileResting = parameters.activeWhileResting
+	reminder.activeWhileResting = activeWhileResting
 	reminder.suppressed = false
 	reminder.suppressTime = 0
 	
@@ -182,8 +179,8 @@ function addon:AddReminder(name, events, callback, icon, attributes, tooltip, pa
 		end
 	end
 	
-	if parameters.color then
-		reminder.setColor(unpack(parameters.color))
+	if color then
+		reminder.setColor(unpack(color))
 	end
 
 	table.insert(reminders, reminder)
@@ -191,16 +188,34 @@ function addon:AddReminder(name, events, callback, icon, attributes, tooltip, pa
 	return reminder
 end
 
-function addon:UpdateReminder(reminder, event, ...)
---if not reminder.suppressed then
+function addon:UpdateReminderState(reminder, event, ...)
+	if reminder.suppressed and reminder.suppressTime < GetTime() then
+		reminder.suppressed = false
+	end
+	
 	local previousState = reminder.active
+	
+	reminder.active = not reminder.suppressed and (reminder.activeWhileResting or not IsResting()) and reminder.callback(reminder, event, ...)
+	
+	--print(event, reminder.title or reminder.name, previousState, "=>", reminder.active, "resting:", reminder.activeWhileResting, "suppresed: ", reminder.suppresed)
+	
+	return previousState, reminder.active
+end
 
-	reminder.active = (not reminder.activeWhileResting or not IsResting()) and reminder.callback(reminder, event, ...)
+function addon:UpdateReminder(reminder, event, ...)
+	local previousState, newState = self:UpdateReminderState(reminder, event, ...)
 
-	if reminder.active and not previousState then
+	if newState ~= previousState then
 		self:UpdateLayout()
 	end
-	--end
+end
+
+function addon:UpdateAllReminders(event)
+	for _, reminder in pairs(reminders) do
+		self:UpdateReminderState(reminder, event or "UPDATE_ALL")
+	end
+	
+	self:UpdateLayout()
 end
 
 function addon:UpdateLayout()
@@ -230,16 +245,6 @@ function addon:UpdateLayout()
 			reminder:SetAlpha(0)
 		end	
 	end
-end
-
-function addon:UpdateAllReminders(event)
-	--print("Updating", #reminders, "reminders.")
-	
-	for _, reminder in pairs(reminders) do
-		reminder.active = (reminder.activeWhileResting or not IsResting()) and reminder.callback(reminder, event or "UPDATE_ALL_REMINDERS")
-	end
-	
-	self:UpdateLayout()
 end
 
 local lastUpdate = 0
