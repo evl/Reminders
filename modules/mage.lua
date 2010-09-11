@@ -11,15 +11,20 @@ if config.enabled and addon.playerClass == "MAGE" then
 		["Rank 6"] = "Mana Sapphire",
 	}
 	
-	local hasManaGem = function()
-		local _, rank = GetSpellInfo("Conjure Mana Gem")
-		local gem = manaGems[rank]
+	local missingManaGem = function(self)
+		local name, rank, icon = GetSpellInfo("Conjure Mana Gem")
 		
-		if gem then
-			return GetItemCount(gem, false, true) == 3
+		if name then
+			local gem = manaGems[rank]
+		
+			if gem and GetItemCount(gem, false, true) == 3 then
+				self.setIcon(icon)
+					
+				return true
+			end
 		end
 	end
 	
-	addon:AddReminder("Missing Armor", function() return not addon:PlayerHasAnyAura(config.armors) end, "Ability_Mage_MoltenArmor", {type = "spell", unit = "player", spell1 = config.armors[1], spell2 = config.armors[2]})
-	addon:AddReminder("Less than 3 Mana Gems remaining", function() return not hasManaGem() end, "INV_Misc_Gem_Sapphire_02",  {type = "spell", spell = "Conjure Mana Gem"})
+	addon:AddReminder("Missing Armor", "UNIT_AURA", function() return not addon:HasAnyAura(config.armors) end, "ability_mage_moltenarmor", nil, {type = "spell", unit = "player", spell1 = config.armors[1], spell2 = config.armors[2]}, nil, true)
+	addon:AddReminder("Less than 3 Mana Gems remaining", "UNIT_INVENTORY_CHANGED", function(self) return missingManaGem(self) end, "inv_misc_gem_sapphire_02", nil, {type = "spell", spell = "Conjure Mana Gem"}, nil, true)
 end
