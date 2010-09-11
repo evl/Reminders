@@ -63,23 +63,8 @@ local config = addon.config
 local frame = CreateFrame("Frame", nil, UIParent)
 local reminders = {}
 
-local initialized
 local onEvent = function(self, event, ...)
-	if initialized then
-		addon:UpdateReminder(self, event, ...)
-	end
-end
-
-local lastUpdate = 0
-local updateInterval = 10
-local onUpdate = function(self, elapsed)
-	lastUpdate = lastUpdate + elapsed
-	
-	if lastUpdate > updateInterval then
-		lastUpdate = 0
-
-		addon:UpdateReminder(self)
-	end
+	addon:UpdateReminder(self, event, ...)
 end
 
 local onEnter = function(self)
@@ -136,7 +121,7 @@ end
 
 local menu
 local menuFrame = CreateFrame("Frame", addonName .. "Menu", UIParent, "UIDropDownMenuTemplate")
-local onShowMenu = function(self)
+local showReminderMenu = function(self)
 	menu = {
 		{text = self.title, isTitle = true},
 		{text = "Suppress for 5 minutes", func = disableReminder, arg1 = self, arg2 = 5 * 60},
@@ -147,10 +132,14 @@ local onShowMenu = function(self)
 	EasyMenu(menu, menuFrame, "cursor", nil, nil, "MENU")
 end
 
-function addon:AddReminder(name, events, callback, icon, attributes, tooltip, color, activeWhileResting)
+function addon:AddReminder(name, events, callback, icon, attributes, tooltip, parameters)
 	if type(events) == "function" then
 		print("WARNING: Reminder", name, " is in deprecated format.")
 		return
+	end
+	
+	if not parameters then
+		parameters = {}
 	end
 	
 	local buttonName = "ReminderButton" .. #reminders
@@ -159,33 +148,29 @@ function addon:AddReminder(name, events, callback, icon, attributes, tooltip, co
 	local texture = reminder:CreateTexture(nil, "BACKGROUND")
 	texture:SetAllPoints(reminder)
 	texture:SetTexCoord(.07, .93, .07, .93)
+	texture:SetTexture("Interface\\Icons\\" .. (icon or "Temp"))
 
 	_G[buttonName .. "Icon"]:SetTexture(texture)
 	
+	-- icon, attributes, tooltip, color, activeWhileResting
 	reminder.title = name
-	reminder.update = callback
-	reminder.icon = icon
 	reminder.tooltip = tooltip
-	reminder.color = color
 
+	reminder.callback = callback
 	reminder.active = nil
-	reminder.activeWhileResting = activeWhileResting
+	reminder.activeWhileResting = parameters.activeWhileResting
 	reminder.suppressed = false
 	reminder.suppressTime = 0
 	
-	reminder.setColor = function (...) texture:SetVertexColor(...) end
-	reminder.setIcon = function(...) texture:SetTexture(...) end
-	
-	reminder.setIcon("Interface\\Icons\\" .. (icon or "Temp"))
-	
-	if color then
-		reminder.setColor(unpack(color))
-	end
-
 	reminder:RegisterForClicks("AnyUp")
 	reminder:SetScript("OnEnter", onEnter)
 	reminder:SetScript("OnLeave", onLeave)
 	reminder:SetScript("OnEvent", onEvent)
+	reminder:SetAttribute("alt-type*", "showMenu")
+
+	reminder.showMenu = showReminderMenu
+	reminder.setColor = function (...) texture:SetVertexColor(...) end
+	reminder.setIcon = function(...) texture:SetTexture(...) end
 	
 	for _, event in pairs(type(events) == "string" and {events} or events) do
 		reminder:RegisterEvent(event)
@@ -196,25 +181,26 @@ function addon:AddReminder(name, events, callback, icon, attributes, tooltip, co
 			reminder:SetAttribute(key, value)
 		end
 	end
-
-	reminder:SetAttribute("alt-type*", "showmenu")
-	reminder.showmenu = onShowMenu
 	
+	if parameters.color then
+		reminder.setColor(unpack(parameters.color))
+	end
+
 	table.insert(reminders, reminder)
 	
 	return reminder
 end
 
 function addon:UpdateReminder(reminder, event, ...)
-	--if not reminder.suppressed then
-		local previousState = reminder.active
-		
-		reminder.active = (reminder.activeWhileResting or not IsResting()) and reminder.update(reminder, event, ...)
-		
-		if reminder.active and not previousState then
-			self:UpdateLayout()
-		end
- 	--end
+--if not reminder.suppressed then
+	local previousState = reminder.active
+
+	reminder.active = (not reminder.activeWhileResting or not IsResting()) and reminder.callback(reminder, event, ...)
+
+	if reminder.active and not previousState then
+		self:UpdateLayout()
+	end
+	--end
 end
 
 function addon:UpdateLayout()
@@ -246,19 +232,32 @@ function addon:UpdateLayout()
 	end
 end
 
-function addon:UpdateAllReminders()
-	print("Updating", #reminders, "reminders.")
+function addon:UpdateAllReminders(event)
+	--print("Updating", #reminders, "reminders.")
 	
 	for _, reminder in pairs(reminders) do
-		reminder.active = (reminder.activeWhileResting or not IsResting()) and reminder.update(reminder, "UPDATE_ALL_REMINDERS")
+		reminder.active = (reminder.activeWhileResting or not IsResting()) and reminder.callback(reminder, event or "UPDATE_ALL_REMINDERS")
 	end
 	
 	self:UpdateLayout()
 end
 
-frame:SetScript("OnEvent", function ()
-	if not initialized then
-		initialized = true
+local lastUpdate = 0
+local updateInterval = 10
+
+frame:SetScript("OnUpdate", function(self, elapsed)
+	lastUpdate = lastUpdate + elapsed
+	
+	if lastUpdate > updateInterval then
+		lastUpdate = 0
+		
+		addon:UpdateAllReminders()
+	end
+end)
+
+frame:SetScript("OnEvent", function(self, event)
+	if event == "PLAYER_ENTERING_WORLD" then
+		self:UnregisterEvent(event)
 
 		frame:SetWidth(36)
 		frame:SetHeight(36)
@@ -266,8 +265,13 @@ frame:SetScript("OnEvent", function ()
 		frame:SetPoint(unpack(config.position))
 	end
 	
-	addon:UpdateAllReminders()
+	if event == "PLAYER_REGEN_ENABLED" then
+		addon:UpdateLayout()
+	else
+		addon:UpdateAllReminders()
+	end
 end)
 
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("PLAYER_UPDATE_RESTING")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
