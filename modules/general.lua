@@ -3,6 +3,19 @@ local config = addon.config.general
 
 if config.enabled then
 	-- Bag slots
-	addon:AddReminder("Less than 3 bag-slots available", function() return MainMenuBarBackpackButton.freeSlots < 3 and MainMenuBarBackpackButton.freeSlots > 0 end, "INV_Misc_Bag_19")
-	addon:AddReminder("No bag-slots available", function() return MainMenuBarBackpackButton.freeSlots == 0 end, "INV_Misc_Bag_19", nil, nil, {1, 0.1, 0.1})
+	addon:AddReminder("Bag space", "BAG_UPDATE", function(self)
+		local slots = MainMenuBarBackpackButton.freeSlots
+
+		if slots < 3 then
+			if slots == 0 then
+				self.title = "No bag-slots available"
+				self.setColor(1, 0.1, 0.1)
+			else
+				self.title = "Less than 3 bag-slots available"
+				self.setColor(1, 1, 1)
+			end
+
+			return true
+		end
+	end, "inv_misc_bag_13")
 end

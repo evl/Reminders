@@ -67,16 +67,6 @@ local initialized
 local onEvent = function(self, event, ...)
 	if initialized then
 		addon:UpdateReminder(self, event, ...)
-	elseif self == frame and event == "PLAYER_ENTERING_WORLD" then
-		print("Initialized.")
-		initialized = true
-
-		frame:SetWidth(36)
-		frame:SetHeight(36)
-		frame:SetScale(config.scale)
-		frame:SetPoint(unpack(config.position))
-
-		addon:UpdateAllReminders()
 	end
 end
 
@@ -157,7 +147,12 @@ local onShowMenu = function(self)
 	EasyMenu(menu, menuFrame, "cursor", nil, nil, "MENU")
 end
 
-function addon:AddReminder(name, events, callback, icon, attributes, tooltip, color)
+function addon:AddReminder(name, events, callback, icon, attributes, tooltip, color, activeWhileResting)
+	if type(events) == "function" then
+		print("WARNING: Reminder", name, " is in deprecated format.")
+		return
+	end
+	
 	local buttonName = "ReminderButton" .. #reminders
 	local reminder = CreateFrame("Button", buttonName, frame, "SecureActionButtonTemplate, ActionButtonTemplate")
 	
@@ -174,6 +169,7 @@ function addon:AddReminder(name, events, callback, icon, attributes, tooltip, co
 	reminder.color = color
 
 	reminder.active = nil
+	reminder.activeWhileResting = activeWhileResting
 	reminder.suppressed = false
 	reminder.suppressTime = 0
 	
@@ -212,12 +208,13 @@ end
 function addon:UpdateReminder(reminder, event, ...)
 	--if not reminder.suppressed then
 		local previousState = reminder.active
-		reminder.active = reminder.update(reminder, event, ...)
 		
-		--if reminder.active and not previousState then
+		reminder.active = (reminder.activeWhileResting or not IsResting()) and reminder.update(reminder, event, ...)
+		
+		if reminder.active and not previousState then
 			self:UpdateLayout()
-		--end
-	--end
+		end
+ 	--end
 end
 
 function addon:UpdateLayout()
@@ -253,12 +250,24 @@ function addon:UpdateAllReminders()
 	print("Updating", #reminders, "reminders.")
 	
 	for _, reminder in pairs(reminders) do
-		reminder.active = reminder.update(reminder, "UPDATE_ALL_REMINDERS")
+		reminder.active = (reminder.activeWhileResting or not IsResting()) and reminder.update(reminder, "UPDATE_ALL_REMINDERS")
 	end
 	
 	self:UpdateLayout()
 end
 
-frame:SetScript("OnEvent", onEvent)
+frame:SetScript("OnEvent", function ()
+	if not initialized then
+		initialized = true
+
+		frame:SetWidth(36)
+		frame:SetHeight(36)
+		frame:SetScale(config.scale)
+		frame:SetPoint(unpack(config.position))
+	end
+	
+	addon:UpdateAllReminders()
+end)
 
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+frame:RegisterEvent("PLAYER_UPDATE_RESTING")
