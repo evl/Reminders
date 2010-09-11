@@ -55,3 +55,29 @@ function addon:HasGlyph(id)
 	
 	return false
 end
+
+function addon:HasEnchantableWeapon(slot)
+	local link = GetInventoryItemLink("player", slot)
+	
+	if link then
+		local equipSlot = _G[select(9, GetItemInfo(link))]
+
+		return equipSlot == INVTYPE_WEAPON or equipSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or INVTYPE_WEAPONOFFHAND)
+	end
+end
+
+	
+function addon:CreatePoller(reminder, duration)
+	local poller = CreateFrame("Frame")
+	poller.reminder = reminder
+	poller.duration = duration
+	poller:SetScript("OnUpdate", function(self, elapsed)
+		self.elapsed = self.elapsed + elapsed
+
+		if self.elapsed < self.duration then
+			addon:UpdateReminder(self.reminder, "UPDATE_POLL")
+		end
+	end)
+
+	return poller
+end
