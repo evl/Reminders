@@ -146,10 +146,9 @@ function addon:AddReminder(name, events, callback, icon, color, attributes, tool
 	local texture = reminder:CreateTexture(nil, "BACKGROUND")
 	texture:SetAllPoints(reminder)
 	texture:SetTexCoord(.07, .93, .07, .93)
-	texture:SetTexture("Interface\\Icons\\" .. (icon or "Temp"))
 
 	_G[buttonName .. "Icon"]:SetTexture(texture)
-	
+
 	reminder.name = name
 	reminder.tooltip = tooltip
 
@@ -166,8 +165,8 @@ function addon:AddReminder(name, events, callback, icon, color, attributes, tool
 	reminder:SetAttribute("alt-type*", "showMenu")
 
 	reminder.showMenu = showReminderMenu
-	reminder.setColor = function (...) texture:SetVertexColor(...) end
-	reminder.setIcon = function(...) texture:SetTexture(...) end
+	reminder.setColor = function(...) texture:SetVertexColor(...) end
+	reminder.setIcon = function(icon) texture:SetTexture((icon:find("\\") and "" or "Interface\\Icons\\") .. icon) end
 	
 	for _, event in pairs(type(events) == "string" and {events} or events) do
 		reminder:RegisterEvent(event)
@@ -176,8 +175,18 @@ function addon:AddReminder(name, events, callback, icon, color, attributes, tool
 	if attributes then
 		for key, value in pairs(attributes) do
 			reminder:SetAttribute(key, value)
+			
+			if not icon and (key == "spell" or key == "spell1") then
+				icon = select(3, GetSpellInfo(value))
+				
+				if addon.debug then
+					print("Resolved missing icon:", icon, "for spell:", value)
+				end
+			end
 		end
 	end
+	
+	reminder.setIcon(icon)
 	
 	if color then
 		reminder.setColor(unpack(color))
@@ -197,7 +206,7 @@ function addon:UpdateReminderState(reminder, event, ...)
 	
 	reminder.active = not reminder.suppressed and (reminder.activeWhileResting or not IsResting()) and reminder.callback(reminder, event, ...)
 	
-	if addon.debug then
+	if addon.debug > 1 then
 		print(event, reminder.title or reminder.name, previousState, "=>", reminder.active, "resting:", reminder.activeWhileResting, "suppresed: ", reminder.suppresed)
 	end
 	
