@@ -2,21 +2,21 @@ local addonName, addon = ...
 local config = addon.config.consumables
 
 if config.enabled then
-	local hasAuraDuration = function(name, duration)
+	local hasExpiringAura = function(name, duration)
 		local name, _, _, _, _, _, expirationTime = UnitAura("player", "Well Fed", nil, "HELPFUL")
 	
 		if name then
-			return expirationTime - GetTime() <= duration
+			return expirationTime - GetTime() <= duration * 60
 		end
 	end
 
-	local hasFlaskDuration = function(duration)
+	local hasExpiringFlask = function(duration)
 		for i = 1, BUFF_MAX_DISPLAY do
 			local name, _, _, _, _, _, expirationTime = UnitAura("player", i, "HELPFUL|CANCELABLE")
 	
 			if name then
 				if name:sub(1, 5) == "Flask" then
-					return expirationTime - GetTime() <= duration
+					return expirationTime - GetTime() <= duration * 60
 				end			
 			else
 				return false
@@ -24,6 +24,6 @@ if config.enabled then
 		end
 	end
 
-	addon:AddReminder("Food buff expiring soon", function() return hasAuraDuration("Well Fed", config.foodThresholdTime * 60) end, "spell_misc_food")
-	addon:AddReminder("Flask expiring soon", function() return hasFlaskDuration(config.flaskThresholdTime * 60) end, "inv_alchemy_endlessflask_06")
+	addon:AddReminder("Food buff expiring soon", "UNIT_AURA", function() return hasExpiringAura("Well Fed", config.foodThresholdTime) end, nil, "spell_misc_food")
+	addon:AddReminder("Flask expiring soon", "UNIT_AURA", function() return hasExpiringFlask(config.flaskThresholdTime) end, nil, "inv_alchemy_endlessflask_06")
 end
