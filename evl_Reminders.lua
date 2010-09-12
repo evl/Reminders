@@ -202,7 +202,7 @@ function addon:AddReminder(name, events, callback, icon, color, attributes, tool
 end
 
 function addon:UpdateReminderState(reminder, event, ...)
-	if reminder.suppressed and reminder.suppressTime < GetTime() then
+	if reminder.suppressed and reminder.suppressTime > 0 and reminder.suppressTime < GetTime() then
 		reminder.suppressed = false
 	end
 	

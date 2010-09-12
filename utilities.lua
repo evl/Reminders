@@ -66,6 +66,49 @@ function addon:HasEnchantableWeapon(slot)
 	end
 end
 
+function addon:GetWeaponEnchantTooltip(primary, secondary)
+	local tooltip
+
+	if primary == secondary then
+		tooltip = "Click to apply " .. primary
+	else
+		tooltip = "Left-click to apply " .. primary .. "\nRight-click to apply " .. secondary
+	end
+
+	return tooltip
+end
+
+function addon:WeaponEnchantEventHandler(event, unit)
+	if not (event == "UNIT_INVENTORY_CHANGED" and unit ~= "player") then
+		local slot = self:GetAttribute("target-slot")
+		local hasEnchant, expiration = select(slot == 16 and 1 or 4, GetWeaponEnchantInfo())
+		local validWeapon = addon:HasEnchantableWeapon(slot)
+		
+		if hasEnchant then
+			local timeLeft = expiration / 1000
+			
+			if timeLeft < config.thresholdTime * 60 then
+				self.title = self.name .." expiring in " .. SecondsToTime(timeLeft, nil, true):lower()
+				self.setColor(1, 1, 1)
+				
+				return validWeapon
+			end
+		else
+			-- If we just lost or applied an enchant we need to poll the weapon enchant info for a while until we're sure it's changed
+			if event == "UNIT_INVENTORY_CHANGED" and validWeapon then
+				local poller = self.poller or addon:CreatePoller(self, 2)
+				poller.elapsed = 0
+			end
+			
+			if validWeapon then
+				self.title = self.name .." missing"
+				self.setColor(1, 0.1, 0.1)
+				
+				return true
+			end
+		end
+	end
+end
 	
 function addon:CreatePoller(reminder, duration)
 	local poller = CreateFrame("Frame")
