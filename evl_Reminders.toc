@@ -6,8 +6,7 @@ evl_Reminders.lua
 config.lua
 utilities.lua
 
-modules\bags.lua
-modules\repair.lua
+modules\inventory.lua
 
 modules\deathknight.lua
 modules\druid.lua

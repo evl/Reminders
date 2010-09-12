@@ -14,13 +14,9 @@ addon.config = {
 		enabled = true
 	},
 	
-	bags = {
-		enabled = true
-	},
-	
-	repair = {
+	inventory = {
 		enabled = true,
-		threshold = 85
+		repairThreshold = 85
 	},
 	
 	mage = {
