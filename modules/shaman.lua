@@ -2,60 +2,44 @@ local addonName, addon = ...
 local config = addon.config.shaman
 
 if config.enabled and addon.playerClass == "SHAMAN" then	
-	--Temporary Weapon Echants
-	local icons = {
-		["Windfury Weapon"] = "Spell_Nature_Cyclone",
-		["Rockbiter Weapon"] = "Spell_Nature_RockBiter",
-		["Earhliving Weapon"] = "Spell_Shaman_EarthlivingWeapon",
-		["Flametongue Weapon"] = "Spell_Fire_FlameTounge",
-		["Frostbrand Weapon"] = "Spell_Frost_FrostBrand",
-	}
-
-	local getEnchantIcon = function(enchant)
-		return icons[enchant]
-	end
-
-	local getEnchantDuration = function(offHand)
-		local hasMainHandEnchant, mainHandExpiration, _, hasOffHandEnchant, offHandExpiration = GetWeaponEnchantInfo()
-
-		if offHand then
-			return hasOffHandEnchant and (offHandExpiration / 1000) or -1
-		else
-			return hasMainHandEnchant and (mainHandExpiration / 1000) or -1
-		end
-	end
-
-	local getEnchantTooltip = function(enchant, secondaryEnchant)
-		local tooltip
-
-		if secondaryEnchant == enchant then
-			tooltip = "Click to apply " .. enchant
-		else
-			tooltip = "Left-click to apply " .. enchant .. "\nRight-click to apply " .. secondaryEnchant
-		end
-
-		return tooltip
-	end
-
-	local hasValidWeapon = function(offHand)
-		if offHand and IsEquippedItemType("Shields") then
-			return false
-		end
-
-		local quality = GetInventoryItemQuality("player", offHand and 17 or 16)
-		return quality and quality > 1
-	end
-
-	local mainHandIcon = getEnchantIcon(config.mainHandEnchants[1])
+	local mainHandTooltip, offHandTooltip = addon:GetWeaponEnchantTooltip(config.mainHandEnchants[1], config.mainHandEnchants[2]), addon:GetWeaponEnchantTooltip(config.offHandEnchants[1], config.offHandEnchants[2])
 	local mainHandAttributes = {type = "spell", spell1 = config.mainHandEnchants[1], spell2 = config.mainHandEnchants[2]}
-	local mainHandTooltip = getEnchantTooltip(config.mainHandEnchants[1], config.mainHandEnchants[2])
-	local offHandIcon = getEnchantIcon(config.offHandEnchants[1])
 	local offHandAttributes = {type = "spell", spell1 = config.offHandEnchants[1], spell2 = config.offHandEnchants[2]}
-	local offHandTooltip = getEnchantTooltip(config.offHandEnchants[1], config.offHandEnchants[2])
+	
+	local onEvent = function(self, event, unit)
+		if not (event == "UNIT_INVENTORY_CHANGED" and unit ~= "player") then
+			local slot = self:GetAttribute("target-slot")
+			local hasEnchant, expiration = select(slot == 16 and 1 or 4, GetWeaponEnchantInfo())
+			local validWeapon = addon:HasEnchantableWeapon(slot)
+			
+			if hasEnchant then
+				local timeLeft = expiration / 1000
+				
+				if timeLeft < config.thresholdTime * 60 then
+					self.title = self.name .." expiring in " .. SecondsToTime(timeLeft, nil, true):lower()
+					self.setColor(1, 1, 1)
+					
+					return validWeapon
+				end
+			else
+				-- If we just lost or applied an enchant we need to poll the weapon enchant info for a while until we're sure it's changed
+				if event == "UNIT_INVENTORY_CHANGED" and validWeapon then
+					local poller = self.poller or addon:CreatePoller(self, 2)
+					poller.elapsed = 0
+				end
+				
+				if validWeapon then
+					self.title = self.name .." missing"
+					self.setColor(1, 0.1, 0.1)
+					
+					return true
+				end
+			end
+		end
+	end
 
-	addon:AddReminder("Missing Shield", function() return not addon:PlayerHasAnyAura(config.shields) end, "Ability_Shaman_WaterShield", {type = "spell", unit = "player", spell1 = config.shields[1], spell2 = config.shields[2]})
-	addon:AddReminder("Main-Hand weapon enchant expiring soon", function() return hasValidWeapon() and getEnchantDuration() > 0 and getEnchantDuration() <= (config.thresholdTime * 60) end, mainHandIcon, mainHandAttributes, mainHandTooltip)
-	addon:AddReminder("Main-hand weapon enchant missing", function() return hasValidWeapon() and getEnchantDuration() == -1 end, mainHandIcon, mainHandAttributes, mainHantTooltip, {1, 0.1, 0.1})
-	addon:AddReminder("Off-Hand weapon enchant expiring soon", function() return hasValidWeapon(true) and getEnchantDuration(true) > 0 and getEnchantDuration(true) <= (config.thresholdTime * 60) end, offHandIcon, offHandAttributes, offHandTooltip)
-	addon:AddReminder("Off-hand weapon enchant missing", function() return hasValidWeapon(true) and getEnchantDuration(true) == -1 end, offHandIcon, offHandAttributes, offHantTooltip, {1, 0.1, 0.1})
+	addon:AddReminder("Missing Shield", function() return not addon:PlayerHasAnyAura(config.shields) end, nil, nil, {type = "spell", unit = "player", spell1 = config.shields[1], spell2 = config.shields[2]})
+	
+	addon:AddReminder("Main hand weapon enchant", "UNIT_INVENTORY_CHANGED", onEvent, nil, nil, mainHandAttributes, mainHandTooltip)
+	addon:AddReminder("Off hand weapon enchant", "UNIT_INVENTORY_CHANGED", onEvent, nil, nil, offHandAttributes, offHandTooltip)
 end
