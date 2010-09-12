@@ -25,6 +25,6 @@ if config.enabled and addon.playerClass == "MAGE" then
 		end
 	end
 	
-	addon:AddReminder("Missing Armor", "UNIT_AURA", function() return not addon:HasAnyAura(config.armors) end, nil, nil, {type = "spell", unit = "player", spell1 = config.armors[1], spell2 = config.armors[2]})
-	addon:AddReminder("Less than 3 Mana Gems remaining", "UNIT_INVENTORY_CHANGED", function(self) return missingManaGem(self) end, nil, nil, {type = "spell", spell = "Conjure Mana Gem"})
+	addon:AddReminder("Missing Armor", "UNIT_AURA", function() return not addon:HasAnyAura(config.armors) end, {type = "spell", unit = "player", spell1 = config.armors[1], spell2 = config.armors[2]})
+	addon:AddReminder("Less than 3 Mana Gems remaining", "UNIT_INVENTORY_CHANGED", function(self) return missingManaGem(self) end, {type = "spell", spell = "Conjure Mana Gem"})
 end

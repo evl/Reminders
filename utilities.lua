@@ -86,8 +86,9 @@ function addon:WeaponEnchantEventHandler(event, unit)
 		
 		if hasEnchant then
 			local timeLeft = expiration / 1000
+			local threshold = self:GetAttribute("threshold") * 60
 			
-			if timeLeft < config.thresholdTime * 60 then
+			if timeLeft < threshold then
 				self.title = self.name .." expiring in " .. SecondsToTime(timeLeft, nil, true):lower()
 				self.setColor(1, 1, 1)
 				

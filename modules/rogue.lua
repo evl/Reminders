@@ -74,9 +74,9 @@ if config.enabled and addon.playerClass == "ROGUE" then
 	end
 		
 	local mainHandTooltip, offHandTooltip = addon:GetWeaponEnchantTooltip(config.mainHandPoisons[1], config.mainHandPoisons[2]), addon:GetWeaponEnchantTooltip(config.offHandPoisons[1], config.offHandPoisons[2])
-	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = getPoisonItemString(config.mainHandPoisons[1]), item2 = getPoisonItemString(config.mainHandPoisons[2])}
-	local offHandAttributes = {type = "item", ["target-slot"] = 17, item1 = getPoisonItemString(config.offHandPoisons[1]), item2 = getPoisonItemString(config.offHandPoisons[2])}
+	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = getPoisonItemString(config.mainHandPoisons[1]), item2 = getPoisonItemString(config.mainHandPoisons[2]), threshold = config.thresholdTime}
+	local offHandAttributes = {type = "item", ["target-slot"] = 17, item1 = getPoisonItemString(config.offHandPoisons[1]), item2 = getPoisonItemString(config.offHandPoisons[2]), threshold = config.thresholdTime}
 
-	addon:AddReminder("Main hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, nil, nil, mainHandAttributes, mainHandTooltip)
-	addon:AddReminder("Off hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, nil, nil, offHandAttributes, offHandTooltip)
+	addon:AddReminder("Main hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, mainHandAttributes, nil, nil, mainHandTooltip)
+	addon:AddReminder("Off hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, offHandAttributes, nil, nil, offHandTooltip)
 end

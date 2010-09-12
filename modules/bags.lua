@@ -1,5 +1,5 @@
 local addonName, addon = ...
-local config = addon.config.general
+local config = addon.config.bags
 
 if config.enabled then
 	-- Bag slots
@@ -17,5 +17,5 @@ if config.enabled then
 
 			return true
 		end
-	end, "inv_misc_bag_13")
+	end, nil, "inv_misc_bag_13", nil, nil, true)
 end

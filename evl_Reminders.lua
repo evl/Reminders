@@ -14,8 +14,13 @@ addon.config = {
 		enabled = true
 	},
 	
-	general = {
+	bags = {
 		enabled = true
+	},
+	
+	repair = {
+		enabled = true,
+		threshold = 85
 	},
 	
 	mage = {
@@ -134,7 +139,7 @@ local showReminderMenu = function(self)
 	EasyMenu(menu, menuFrame, "cursor", nil, nil, "MENU")
 end
 
-function addon:AddReminder(name, events, callback, icon, color, attributes, tooltip, activeWhileResting)
+function addon:AddReminder(name, events, callback, attributes, icon, color, tooltip, activeWhileResting)
 	if type(events) == "function" then
 		print("WARNING: Reminder", name, " is in deprecated format.")
 		return
