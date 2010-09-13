@@ -56,13 +56,15 @@ function addon:HasGlyph(id)
 	return false
 end
 
+local fishingPole = select(17, GetAuctionItemSubClasses(1))
+
 function addon:HasEnchantableWeapon(slot)
 	local link = GetInventoryItemLink("player", slot)
 	
 	if link then
-		local equipSlot = _G[select(9, GetItemInfo(link))]
-
-		return equipSlot == INVTYPE_WEAPON or equipSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or INVTYPE_WEAPONOFFHAND)
+		local subClass, _, equipSlot = _G[select(7, GetItemInfo(link))]
+		
+		return equipSlot == INVTYPE_WEAPON or equipSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or INVTYPE_WEAPONOFFHAND) or (equipSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole)
 	end
 end
 
@@ -124,4 +126,28 @@ function addon:CreatePoller(reminder, duration)
 	end)
 
 	return poller
+end
+
+local infinity = math.huge
+
+function addon:ColorGradient(value, ...)
+	if value ~= value or value == infinity then
+		value = 0
+	end
+	
+	if value >= 1 then
+		local r, g, b = select(select('#', ...) - 2, ...)
+		
+		return r, g, b
+	elseif value <= 0 then
+		local r, g, b = ...
+		
+		return r, g, b
+	end
+	
+	local segmentCount = select('#', ...) / 3
+	local segment, relativePercent = math.modf(value * (segmentCount - 1))
+	local r1, g1, b1, r2, g2, b2 = select((segment * 3)+1, ...)
+	
+	return r1 + (r2 - r1) * relativePercent, g1 + (g2 - g1) * relativePercent, b1 + (b2 - b1) * relativePercent
 end

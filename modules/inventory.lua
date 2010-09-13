@@ -27,33 +27,6 @@ if config.enabled then
 		slotIds[slot] = GetInventorySlotInfo(slot .. "Slot")
 	end
 	
-	-- From oUF, thanks haste!
-	local infinity = math.huge
-	
-	function addon:ColorGradient(value, ...)
-		if value ~= value or value == infinity then
-			value = 0
-		end
-		
-		if value >= 1 then
-			local r, g, b = select(select('#', ...) - 2, ...)
-			
-			return r, g, b
-		elseif value <= 0 then
-			local r, g, b = ...
-			
-			return r, g, b
-		end
-		
-		local segmentCount = select('#', ...) / 3
-		local segment, relativePercent = math.modf(value * (segmentCount - 1))
-		local r1, g1, b1, r2, g2, b2 = select((segment * 3)+1, ...)
-		
-		return r1 + (r2 - r1) * relativePercent, g1 + (g2 - g1) * relativePercent, b1 + (b2 - b1) * relativePercent
-	end
-	
-	local getDurability
-
 	local repairReminder = addon:AddReminder("Equipment damaged", {"UPDATE_INVENTORY_DURABILITY", "UNIT_INVENTORY_CHANGED"}, function(self)
 		local minDurability = 1
 
