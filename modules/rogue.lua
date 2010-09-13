@@ -79,4 +79,10 @@ if config.enabled and addon.playerClass == "ROGUE" then
 
 	addon:AddReminder("Main hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, mainHandAttributes, nil, nil, mainHandTooltip)
 	addon:AddReminder("Off hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, offHandAttributes, nil, nil, offHandTooltip)
+	
+	local restockPoisons = function(self)
+		
+	end
+
+	addon:AddReminder("Poison stock low", "UNIT_INVENTORY_CHANGED", function(self) end, {type = restockPoisons}, nil, nil, "Click to restock poisons")
 end
