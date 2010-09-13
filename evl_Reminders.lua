@@ -77,15 +77,17 @@ local onEnter = function(self)
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(self.tooltip)
 	else
-		local left = self:GetAttribute("item1")
+		local left = self:GetAttribute("item") or self:GetAttribute("item1")
+		local button = right and "Left-click" or "Click"
+		
 		if left then
 			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine("Left-click to use " .. left)
+			GameTooltip:AddLine(button .. " to use " .. left)
 		else
-			left = self:GetAttribute("spell1")
+			left = self:GetAttribute("spell") or self:GetAttribute("spell1")
 			if left then
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine("Left-click to cast " .. left)
+				GameTooltip:AddLine(button .. " to cast " .. left)
 			end
 		end
 
