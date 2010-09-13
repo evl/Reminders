@@ -35,6 +35,8 @@ config.rogue.enabled = true
 config.rogue.mainHandPoisons = {"Instant Poison", "Wound Poison"} -- Preferred main-hand poisons
 config.rogue.offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"} -- Preferred off-hand poison
 config.rogue.thresholdTime = 10 -- Number of minutes to warn before a poison expires
+config.rogue.restockThreshold = 10 -- Minimum number of poisons in inventory before reminding to restock
+config.rogue.restockAmount = 40 -- Number of poisons to restock at a vendor
 
 -- Shaman
 config.shaman.enabled = true

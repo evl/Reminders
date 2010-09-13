@@ -40,7 +40,9 @@ addon.config = {
 		enabled = true,
 		mainHandPoisons = {"Instant Poison", "Wound Poison"},
 		offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"},
-		thresholdTime = 10
+		thresholdTime = 10,
+		restockThreshold = 10,
+		restockAmount = 40
 	},
 	
 	shaman = {
@@ -69,9 +71,7 @@ local onEvent = function(self, event, ...)
 end
 
 local onEnter = function(self)
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetWidth(250)
-	GameTooltip:AddLine(self.title or self.name)
+	addon:PrepareReminderTooltip(self)
 
 	if self.tooltip then
 		GameTooltip:AddLine(" ")
@@ -135,6 +135,12 @@ local showReminderMenu = function(self)
 	}
 
 	EasyMenu(menu, menuFrame, "cursor", nil, nil, "MENU")
+end
+
+function addon:PrepareReminderTooltip(reminder)
+	GameTooltip:SetOwner(reminder, "ANCHOR_RIGHT")
+	GameTooltip:SetWidth(250)
+	GameTooltip:AddLine(reminder.title or reminder.name)
 end
 
 function addon:AddReminder(name, events, callback, attributes, icon, color, tooltip, activeWhileResting)

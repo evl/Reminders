@@ -39,7 +39,7 @@ if config.enabled then
 		end
 		
 		if minDurability < config.repairThreshold / 100 then
-			local r, g, b = addon:ColorGradient(minDurability, 1, 0, 0, 1, 1, 0, 0, 1, 0)
+			local r, g, b = addon:ConditionColorGradient(minDurability)
 			self.setColor(r, g, b)
 
 			return true
@@ -48,9 +48,8 @@ if config.enabled then
 	
 	local round = function(value) return floor(value + 0.5) end
 	repairReminder:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		GameTooltip:SetWidth(250)
-		GameTooltip:AddLine(self.name)
+		addon:PrepareReminderTooltip(self)
+		
 		GameTooltip:AddLine(" ")
 
 		for _, id in pairs(slotIds) do
@@ -64,7 +63,7 @@ if config.enabled then
 					local name, _, quality = GetItemInfo(link)
 					local qualityColor = ITEM_QUALITY_COLORS[quality]
 					local icon = GetItemIcon(link)
-					local r, g, b = addon:ColorGradient(percent, 1, 0, 0, 1, 1, 0, 0, 1, 0)
+					local r, g, b = addon:ConditionColorGradient(percent)
 				
 					GameTooltip:AddDoubleLine(name, math.floor((percent * 100) + 0.5) .. "%", qualityColor.r, qualityColor.g, qualityColor.b, r, g, b)
 					GameTooltip:AddTexture(icon)

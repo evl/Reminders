@@ -147,7 +147,11 @@ function addon:ColorGradient(value, ...)
 	
 	local segmentCount = select('#', ...) / 3
 	local segment, relativePercent = math.modf(value * (segmentCount - 1))
-	local r1, g1, b1, r2, g2, b2 = select((segment * 3)+1, ...)
+	local r1, g1, b1, r2, g2, b2 = select((segment * 3) + 1, ...)
 	
 	return r1 + (r2 - r1) * relativePercent, g1 + (g2 - g1) * relativePercent, b1 + (b2 - b1) * relativePercent
+end
+
+function addon:ConditionColorGradient(value)
+	return addon:ColorGradient(value, 1, 0, 0, 1, 1, 0, 0, 1, 0)
 end

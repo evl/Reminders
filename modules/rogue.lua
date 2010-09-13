@@ -80,9 +80,108 @@ if config.enabled and addon.playerClass == "ROGUE" then
 	addon:AddReminder("Main hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, mainHandAttributes, nil, nil, mainHandTooltip)
 	addon:AddReminder("Off hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, offHandAttributes, nil, nil, offHandTooltip)
 	
-	local restockPoisons = function(self)
+	function addon:GetMerchantItems()
+		local count = GetMerchantNumItems()
 		
-	end
+		if count then
+			local result = {}
+		
+			for i = 1, count do
+				local name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo(i)
+				result[name] = i
+			end
 
-	addon:AddReminder("Poison stock low", "UNIT_INVENTORY_CHANGED", function(self) end, {type = restockPoisons}, nil, nil, "Click to restock poisons")
+			return result
+		end
+	end
+	
+	function addon:MerchantHasItem(name)
+		local count = GetMerchantNumItems()
+		
+		if count then
+			for i = 1, count do
+				local name, _, _, quantity = GetMerchantItemInfo(i)
+				
+				if name and quantity > 0 then
+					return true
+				end
+			end
+		end
+	end
+	
+	local checkPoisonStock = function(self)
+		for _, slot in (pairs({config.mainHandPoisons, config.offHandPoisons})) do
+			for _, name in pairs(slot) do
+				if (GetItemCount(name) < config.restockThreshold) then
+					return true
+				end
+			end
+		end
+	end
+	
+	local restockPoisons = function(self)
+		local merchantItems = addon:GetMerchantItems()
+		
+		if merchantItems then
+			for _, slot in (pairs({config.mainHandPoisons, config.offHandPoisons})) do
+				for _, name in pairs(slot) do
+					local itemString = getPoisonItemString(name)
+					local item = GetItemInfo(itemString)
+					local merchantIndex = merchantItems[item]
+					
+					if merchantIndex then
+						local count = GetItemCount(itemString)
+						local maxStack = GetMerchantItemMaxStack(merchantIndex)
+						
+						-- TODO: This is quite dangerous, enable while loop when we're sure it works
+						--while count < config.restockAmount do
+						if count < config.restockAmount then
+							local buyCount = math.min(maxStack, config.restockAmount - count)
+							
+							if addon.debug then
+								print("Buying", item, "x", buyCount, "count:", count)
+							end
+							
+							BuyMerchantItem(merchantIndex, buyCount)
+							
+							count = count + buyCount
+						end
+					end
+				end
+			end
+		else
+			UIErrorsFrame:AddMessage("Invalid poison vendor", 1.0, 0.1, 0.1)
+		end
+	end
+	
+	local poisonStockReminder = addon:AddReminder("Poison stock low", "BAG_UPDATE", checkPoisonStock, {type = restockPoisons}, nil, nil, "Click to restock poisons")
+	poisonStockReminder:SetScript("OnEnter", function(self)
+		addon:PrepareReminderTooltip(self)
+		
+		GameTooltip:AddLine(" ")
+		
+		local validMerchant
+		
+		for _, slot in (pairs({config.mainHandPoisons, config.offHandPoisons})) do
+			for _, name in pairs(slot) do
+				local itemString = getPoisonItemString(name)
+				local item, _, _, _, _, _, _, _, _, texture = GetItemInfo(itemString)
+				local count = GetItemCount(itemString)
+				local r, g, b = addon:ConditionColorGradient(math.max(1, count / config.restockThreshold))
+				
+				GameTooltip:AddDoubleLine(item, count, 1, 1, 1, r, g, b)
+				GameTooltip:AddTexture(texture)
+				
+				-- Check if we are at a merchant selling our preferred poisons
+				if not validMerchant then
+					validMerchant = MerchantHasItem(item)
+				end
+			end
+		end
+		
+		if validMerchant then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(self.tooltip)
+		end
+	end)
 end
