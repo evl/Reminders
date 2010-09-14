@@ -159,6 +159,7 @@ function addon:AddReminder(name, events, callback, attributes, icon, color, tool
 	_G[buttonName .. "Icon"]:SetTexture(texture)
 
 	reminder.name = name
+	reminder.icon = icon
 	reminder.tooltip = tooltip
 
 	reminder.callback = callback
@@ -184,22 +185,8 @@ function addon:AddReminder(name, events, callback, attributes, icon, color, tool
 	if attributes then
 		for key, value in pairs(attributes) do
 			reminder:SetAttribute(key, value)
-			
-			if not icon then
-				if key == "spell" or key == "spell1" then
-					icon = select(3, GetSpellInfo(value))
-				elseif key == "item" or key == "item1" then
-					icon = GetItemIcon(value)
-				end
-
-				if icon and addon.debug then
-					print("Resolved missing icon:", icon, "for:", value)
-				end
-			end
 		end
 	end
-	
-	reminder.setIcon(icon)
 	
 	if color then
 		reminder.setColor(unpack(color))
@@ -240,6 +227,27 @@ function addon:UpdateAllReminders(event)
 	end
 	
 	self:UpdateLayout()
+end
+
+function addon:UpdateReminderIcons()
+	for _, reminder in pairs(reminders) do
+		local icon = reminder.icon
+		
+		if not icon then
+			local spell = reminder:GetAttribute("spell") or reminder:GetAttribute("spell1")
+		
+			if spell then
+				icon = select(3, GetSpellInfo(spell))
+			else
+				icon = GetItemIcon(reminder:GetAttribute("item") or reminder:GetAttribute("item1"))
+			end
+		end
+
+		if icon and addon.debug then
+			print("Resolved missing icon:", icon, "for:", reminder.name)
+			reminder.setIcon(icon)
+		end
+	end
 end
 
 function addon:UpdateLayout()
@@ -287,11 +295,13 @@ end)
 frame:SetScript("OnEvent", function(self, event)
 	if event == "PLAYER_ENTERING_WORLD" then
 		self:UnregisterEvent(event)
-
+		
 		frame:SetWidth(36)
 		frame:SetHeight(36)
 		frame:SetScale(config.scale)
-		frame:SetPoint(unpack(config.position))
+		frame:SetPoint(unpack(config.position))		
+
+		addon:UpdateReminderIcons()
 	end
 	
 	if event == "PLAYER_REGEN_ENABLED" then
