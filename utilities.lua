@@ -62,9 +62,10 @@ function addon:HasEnchantableWeapon(slot)
 	local link = GetInventoryItemLink("player", slot)
 	
 	if link then
-		local subClass, _, equipSlot = _G[select(7, GetItemInfo(link))]
+		local subClass, _, equipSlot = select(7, GetItemInfo(link))
+		local localizedSlot = _G[equipSlot]
 		
-		return equipSlot == INVTYPE_WEAPON or equipSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or INVTYPE_WEAPONOFFHAND) or (equipSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole)
+		return localizedSlot == INVTYPE_WEAPON or localizedSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or INVTYPE_WEAPONOFFHAND) or (localizedSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole)
 	end
 end
 
@@ -99,7 +100,7 @@ function addon:WeaponEnchantEventHandler(event, unit)
 		else
 			-- If we just lost or applied an enchant we need to poll the weapon enchant info for a while until we're sure it's changed
 			if event == "UNIT_INVENTORY_CHANGED" and validWeapon then
-				local poller = self.poller or addon:CreatePoller(self, 2)
+				local poller = self.poller or addon:CreatePoller(self, 4)
 				poller.elapsed = 0
 			end
 			
