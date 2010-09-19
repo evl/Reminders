@@ -1,8 +1,6 @@
 local addonName, addon = ...
 
-addon.debug = 0
 addon.config = {
-	debug = 0,
 	scale = 1,
 	position = {"CENTER", UIParent, "CENTER", 300, 0},
 	
@@ -208,10 +206,6 @@ function addon:UpdateReminderState(reminder, event, ...)
 	
 	reminder.active = not reminder.suppressed and (IsResting() and reminder.activeWhileResting > 0 or reminder.activeWhileResting < 2) and reminder.callback(reminder, event, ...)
 	
-	if addon.debug > 1 then
-		print(event, reminder.title or reminder.name, previousState, "=>", reminder.active, "resting:", reminder.activeWhileResting, "suppresed: ", reminder.suppresed)
-	end
-	
 	return previousState, reminder.active
 end
 
@@ -245,8 +239,7 @@ function addon:UpdateReminderIcons()
 			end
 		end
 
-		if icon and addon.debug then
-			print("Resolved missing icon:", icon, "for:", reminder.name)
+		if icon then
 			reminder.setIcon(icon)
 		end
 	end
