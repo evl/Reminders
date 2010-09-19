@@ -1,6 +1,8 @@
 local addonName, addon = ...
 
+addon.debug = 0
 addon.config = {
+	debug = 0,
 	scale = 1,
 	position = {"CENTER", UIParent, "CENTER", 300, 0},
 	
