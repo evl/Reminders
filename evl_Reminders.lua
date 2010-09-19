@@ -203,8 +203,9 @@ function addon:UpdateReminderState(reminder, event, ...)
 	end
 	
 	local previousState = reminder.active
+	local resting = IsResting()
 	
-	reminder.active = not reminder.suppressed and (IsResting() and reminder.activeWhileResting > 0 or reminder.activeWhileResting < 2) and reminder.callback(reminder, event, ...)
+	reminder.active = not reminder.suppressed and ((resting and reminder.activeWhileResting > 0) or (not resting and reminder.activeWhileResting < 2)) and reminder.callback(reminder, event, ...)
 	
 	return previousState, reminder.active
 end
