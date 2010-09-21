@@ -83,7 +83,7 @@ function addon:GetWeaponEnchantTooltip(primary, secondary)
 end
 
 function addon:WeaponEnchantCallback()
-	local slot = self:GetAttribute("target-slot")
+	local slot = self:GetAttribute("target-slot") or self:GetAttribute("slot")
 	local hasEnchant, expiration = select(slot == 16 and 1 or 4, GetWeaponEnchantInfo())
 	local validWeapon = addon:HasEnchantableWeapon(slot)
 	
