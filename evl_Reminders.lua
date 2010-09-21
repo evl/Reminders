@@ -66,10 +66,6 @@ local config = addon.config
 local frame = CreateFrame("Frame", nil, UIParent)
 local reminders = {}
 
-local onEvent = function(self, event, ...)
-	addon:UpdateReminder(self, event, ...)
-end
-
 local onEnter = function(self)
 	addon:PrepareReminderTooltip(self)
 
@@ -143,13 +139,8 @@ function addon:PrepareReminderTooltip(reminder)
 	GameTooltip:AddLine(reminder.title or reminder.name)
 end
 
-function addon:AddReminder(name, events, callback, attributes, icon, color, tooltip, activeWhileResting)
-	if type(events) == "function" then
-		print("WARNING: Reminder", name, " is in deprecated format.")
-		return
-	end
-	
-	local buttonName = "ReminderButton" .. #reminders
+function addon:AddReminder(name, callback, attributes, icon, color, tooltip, activeWhileResting)
+	local buttonName = "ReminderButton" .. frame:GetNumChildren()
 	local reminder = CreateFrame("Button", buttonName, frame, "SecureActionButtonTemplate, ActionButtonTemplate")
 	
 	local texture = reminder:CreateTexture(nil, "BACKGROUND")
@@ -171,17 +162,12 @@ function addon:AddReminder(name, events, callback, attributes, icon, color, tool
 	reminder:RegisterForClicks("AnyUp")
 	reminder:SetScript("OnEnter", onEnter)
 	reminder:SetScript("OnLeave", onLeave)
-	reminder:SetScript("OnEvent", onEvent)
 	reminder:SetAttribute("alt-type*", "showMenu")
 
 	reminder.showMenu = showReminderMenu
 	reminder.setColor = function(...) texture:SetVertexColor(...) end
 	reminder.setIcon = function(icon) texture:SetTexture(((icon and icon:find("\\")) and "" or "Interface\\Icons\\") .. (icon or "Temp")) end
 	
-	for _, event in pairs(type(events) == "string" and {events} or events) do
-		reminder:RegisterEvent(event)
-	end
-
 	if attributes then
 		for key, value in pairs(attributes) do
 			reminder:SetAttribute(key, value)
@@ -191,13 +177,13 @@ function addon:AddReminder(name, events, callback, attributes, icon, color, tool
 	if color then
 		reminder.setColor(unpack(color))
 	end
-
-	table.insert(reminders, reminder)
 	
+	table.insert(reminders, reminder)
+
 	return reminder
 end
 
-function addon:UpdateReminderState(reminder, event, ...)
+function addon:UpdateReminderState(reminder, ...)
 	if reminder.suppressed and reminder.suppressTime > 0 and reminder.suppressTime < GetTime() then
 		reminder.suppressed = false
 	end
@@ -205,29 +191,29 @@ function addon:UpdateReminderState(reminder, event, ...)
 	local previousState = reminder.active
 	local resting = IsResting()
 	
-	reminder.active = not reminder.suppressed and ((resting and reminder.activeWhileResting > 0) or (not resting and reminder.activeWhileResting < 2)) and reminder.callback(reminder, event, ...)
+	reminder.active = not reminder.suppressed and ((resting and reminder.activeWhileResting > 0) or (not resting and reminder.activeWhileResting < 2)) and reminder.callback(reminder, ...)
 	
 	return previousState, reminder.active
 end
 
-function addon:UpdateReminder(reminder, event, ...)
-	local previousState, newState = self:UpdateReminderState(reminder, event, ...)
+function addon:UpdateReminder(reminder, ...)
+	local previousState, newState = self:UpdateReminderState(reminder, ...)
 
 	if newState ~= previousState then
 		self:UpdateLayout()
 	end
 end
 
-function addon:UpdateAllReminders(event)
-	for _, reminder in pairs(reminders) do
-		self:UpdateReminderState(reminder, event or "UPDATE_ALL")
+function addon:UpdateAllReminders()
+	for _, reminder in pairs(reminders)  do
+		self:UpdateReminderState(reminder)
 	end
 	
 	self:UpdateLayout()
 end
 
 function addon:UpdateReminderIcons()
-	for _, reminder in pairs(reminders) do
+	for _, reminder in pairs(reminders)  do
 		local icon = reminder.icon
 		
 		if not icon then
@@ -240,9 +226,7 @@ function addon:UpdateReminderIcons()
 			end
 		end
 
-		if icon then
-			reminder.setIcon(icon)
-		end
+		reminder.setIcon(icon)
 	end
 end
 
@@ -250,7 +234,7 @@ function addon:UpdateLayout()
 	local inCombat = InCombatLockdown()
 	local previousReminder
 
-	for _, reminder in pairs(reminders) do
+	for _, reminder in pairs(reminders)  do
 		if reminder.active then
 			if not inCombat then
 				if previousReminder then
@@ -276,12 +260,10 @@ function addon:UpdateLayout()
 end
 
 local lastUpdate = 0
-local updateInterval = 10
-
 frame:SetScript("OnUpdate", function(self, elapsed)
 	lastUpdate = lastUpdate + elapsed
 	
-	if lastUpdate > updateInterval then
+	if lastUpdate > 0.5 then
 		lastUpdate = 0
 		
 		addon:UpdateAllReminders()
@@ -308,5 +290,4 @@ frame:SetScript("OnEvent", function(self, event)
 end)
 
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-frame:RegisterEvent("PLAYER_UPDATE_RESTING")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")

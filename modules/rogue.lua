@@ -77,8 +77,8 @@ if config.enabled and addon.playerClass == "ROGUE" then
 	local mainHandAttributes = {type = "item", ["target-slot"] = 16, item1 = getPoisonItemString(config.mainHandPoisons[1]), item2 = getPoisonItemString(config.mainHandPoisons[2]), threshold = config.thresholdTime}
 	local offHandAttributes = {type = "item", ["target-slot"] = 17, item1 = getPoisonItemString(config.offHandPoisons[1]), item2 = getPoisonItemString(config.offHandPoisons[2]), threshold = config.thresholdTime}
 
-	addon:AddReminder("Main hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, mainHandAttributes, nil, nil, mainHandTooltip)
-	addon:AddReminder("Off hand poison", "UNIT_INVENTORY_CHANGED", addon.WeaponEnchantEventHandler, offHandAttributes, nil, nil, offHandTooltip)
+	addon:AddReminder("Main hand poison", addon.WeaponEnchantCallback, mainHandAttributes, nil, nil, mainHandTooltip)
+	addon:AddReminder("Off hand poison", addon.WeaponEnchantCallback, offHandAttributes, nil, nil, offHandTooltip)
 	
 	function addon:GetMerchantItems()
 		local count = GetMerchantNumItems()
@@ -155,7 +155,7 @@ if config.enabled and addon.playerClass == "ROGUE" then
 		end
 	end
 	
-	local poisonStockReminder = addon:AddReminder("Poison stock low", "BAG_UPDATE", checkPoisonStock, {type = "handler", _handler = restockPoisons}, "trade_brewpoison", nil, "Click to restock poisons", 2)
+	local poisonStockReminder = addon:AddReminder("Poison stock low", checkPoisonStock, {type = "handler", _handler = restockPoisons}, "trade_brewpoison", nil, "Click to restock poisons", 2)
 	poisonStockReminder:SetScript("OnEnter", function(self)
 		addon:PrepareReminderTooltip(self)
 		

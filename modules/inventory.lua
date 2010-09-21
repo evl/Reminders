@@ -3,7 +3,7 @@ local config = addon.config.inventory
 
 if config.enabled then
 	-- Bag slots
-	addon:AddReminder("Bag space", "BAG_UPDATE", function(self)
+	addon:AddReminder("Bag space", function(self)
 		local slots = MainMenuBarBackpackButton.freeSlots
 
 		if slots < 3 then
@@ -27,7 +27,7 @@ if config.enabled then
 		slotIds[slot] = GetInventorySlotInfo(slot .. "Slot")
 	end
 	
-	local repairReminder = addon:AddReminder("Equipment damaged", {"UPDATE_INVENTORY_DURABILITY", "UNIT_INVENTORY_CHANGED"}, function(self)
+	local repairReminder = addon:AddReminder("Equipment damaged", function(self)
 		local minDurability = 1
 
 		for _, id in pairs(slotIds) do

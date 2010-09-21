@@ -24,6 +24,6 @@ if config.enabled then
 		end
 	end
 
-	addon:AddReminder("Food buff expiring soon", "UNIT_AURA", function() return hasExpiringAura("Well Fed", config.foodThresholdTime) end, nil, "spell_misc_food")
-	addon:AddReminder("Flask expiring soon", "UNIT_AURA", function() return hasExpiringFlask(config.flaskThresholdTime) end, nil, "inv_alchemy_endlessflask_06")
+	addon:AddReminder("Food buff expiring soon", function() return hasExpiringAura("Well Fed", config.foodThresholdTime) end, nil, "spell_misc_food")
+	addon:AddReminder("Flask expiring soon", function() return hasExpiringFlask(config.flaskThresholdTime) end, nil, "inv_alchemy_endlessflask_06")
 end

@@ -57,6 +57,7 @@ function addon:HasGlyph(id)
 end
 
 local fishingPole = select(17, GetAuctionItemSubClasses(1))
+local shield = select(6, GetAuctionItemSubClasses(1))
 
 function addon:HasEnchantableWeapon(slot)
 	local link = GetInventoryItemLink("player", slot)
@@ -65,7 +66,7 @@ function addon:HasEnchantableWeapon(slot)
 		local subClass, _, equipSlot = select(7, GetItemInfo(link))
 		local localizedSlot = _G[equipSlot]
 		
-		return localizedSlot == INVTYPE_WEAPON or localizedSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or INVTYPE_WEAPONOFFHAND) or (localizedSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole)
+		return localizedSlot == INVTYPE_WEAPON or localizedSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or (INVTYPE_WEAPONOFFHAND and subClass ~= shield)) or (localizedSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole)
 	end
 end
 
@@ -81,52 +82,27 @@ function addon:GetWeaponEnchantTooltip(primary, secondary)
 	return tooltip
 end
 
-function addon:WeaponEnchantEventHandler(event, unit)
-	if not (event == "UNIT_INVENTORY_CHANGED" and unit ~= "player") then
-		local slot = self:GetAttribute("target-slot")
-		local hasEnchant, expiration = select(slot == 16 and 1 or 4, GetWeaponEnchantInfo())
-		local validWeapon = addon:HasEnchantableWeapon(slot)
-		
-		if hasEnchant then
-			local timeLeft = expiration / 1000
-			local threshold = self:GetAttribute("threshold") * 60
-			
-			if timeLeft < threshold then
-				self.title = self.name .." expiring in " .. SecondsToTime(timeLeft, nil, true):lower()
-				self.setColor(1, 1, 1)
-				
-				return validWeapon
-			end
-		else
-			-- If we just lost or applied an enchant we need to poll the weapon enchant info for a while until we're sure it's changed
-			if event == "UNIT_INVENTORY_CHANGED" and validWeapon then
-				local poller = self.poller or addon:CreatePoller(self, 4)
-				poller.elapsed = 0
-			end
-			
-			if validWeapon then
-				self.title = self.name .." missing"
-				self.setColor(1, 0.1, 0.1)
-				
-				return true
-			end
-		end
-	end
-end
+function addon:WeaponEnchantCallback()
+	local slot = self:GetAttribute("target-slot")
+	local hasEnchant, expiration = select(slot == 16 and 1 or 4, GetWeaponEnchantInfo())
+	local validWeapon = addon:HasEnchantableWeapon(slot)
 	
-function addon:CreatePoller(reminder, duration)
-	local poller = CreateFrame("Frame")
-	poller.reminder = reminder
-	poller.duration = duration
-	poller:SetScript("OnUpdate", function(self, elapsed)
-		self.elapsed = self.elapsed + elapsed
-
-		if self.elapsed < self.duration then
-			addon:UpdateReminder(self.reminder, "UPDATE_POLL")
+	if hasEnchant then
+		local timeLeft = expiration / 1000
+		local threshold = self:GetAttribute("threshold") * 60
+		
+		if timeLeft < threshold then
+			self.title = self.name .." expiring in " .. SecondsToTime(timeLeft, nil, true):lower()
+			self.setColor(1, 1, 1)
+			
+			return validWeapon
 		end
-	end)
-
-	return poller
+	elseif validWeapon then
+		self.title = self.name .. " missing"
+		self.setColor(1, 0.1, 0.1)
+	
+		return true
+	end
 end
 
 local infinity = math.huge
