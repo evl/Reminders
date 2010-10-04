@@ -61,9 +61,8 @@ local shield = select(6, GetAuctionItemSubClasses(1))
 
 function addon:HasEnchantableWeapon(slot)
 	local link = GetInventoryItemLink("player", slot)
-	local quality = select(3, GetItemInfo(link))
 	
-	if link and quality > 1 then
+	if link and select(3, GetItemInfo(link)) > 1 then
 		local subClass, _, equipSlot = select(7, GetItemInfo(link))
 		local localizedSlot = _G[equipSlot]
 		
