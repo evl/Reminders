@@ -67,7 +67,7 @@ function addon:HasEnchantableWeapon(slot)
 		local subClass, _, equipSlot = select(7, GetItemInfo(link))
 		local localizedSlot = _G[equipSlot]
 		
-		return quality > 1 and localizedSlot == INVTYPE_WEAPON or localizedSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or (INVTYPE_WEAPONOFFHAND and subClass ~= shield)) or (localizedSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole)
+		return quality > 1 and (localizedSlot == INVTYPE_WEAPON or localizedSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or (INVTYPE_WEAPONOFFHAND and subClass ~= shield)) or (localizedSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole))
 	end
 end
 
