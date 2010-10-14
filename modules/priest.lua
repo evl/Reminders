@@ -7,5 +7,7 @@ if config.enabled and addon.playerClass == "PRIEST" then
 	addon:AddReminder("Missing Inner Fire", function() return not addon:PlayerHasBuff("Inner Fire") end, {type = "spell", spell = "Inner Fire"})
 	
 	-- Shadow
-	addon:AddReminder("Missing Vampiric Embrace", function() return addon:HasTalent(3, 14) and not addon:PlayerHasBuff("Vampiric Embrace") end, {type = "spell", spell = "Vampiric Embrace"})
+	if addon:HasTalent(3, 14) then
+		addon:AddReminder("Missing Vampiric Embrace", function() return not addon:PlayerHasBuff("Vampiric Embrace") end, {type = "spell", spell = "Vampiric Embrace"})
+	end
 end

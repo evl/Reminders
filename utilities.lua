@@ -40,8 +40,12 @@ function addon:InPVEInstance()
 	return false
 end
 
-function addon:HasTalent(tabIndex, talentIndex, rankRequired)
-	return select(5, GetTalentInfo(tabIndex, talentIndex)) >= (rankRequired or 1)
+function addon:GetTalentRank(tabIndex, talentIndex)
+	return select(5, GetTalentInfo(tabIndex, talentIndex))
+end
+
+function addon:HasTalentRank(tabIndex, talentIndex, rankRequired)
+	return self:GetTalentRank(tabIndex, talentIndex) >= (rankRequired or 1)
 end
 
 function addon:HasGlyph(id)

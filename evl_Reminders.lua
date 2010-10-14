@@ -14,6 +14,10 @@ addon.config = {
 		enabled = true
 	},
 	
+	hunter = {
+		enabled = true
+	},
+	
 	inventory = {
 		enabled = true,
 		repairThreshold = 85

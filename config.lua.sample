@@ -17,6 +17,9 @@ config.consumables.flaskThresholdTime = 5 -- Number of minutes to warn before a 
 -- Druid
 config.druid.enabled = true
 
+-- Hunter
+config.hunter.enabled = true
+
 -- Mage
 config.mage.enabled = true
 config.mage.armors = {"Molten Armor", "Mage Armor"} -- List of armors
