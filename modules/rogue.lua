@@ -44,7 +44,7 @@ if config.enabled and addon.playerClass == "ROGUE" then
 	
 	for _, slot in pairs({config.mainHandPoisons, config.offHandPoisons, config.throwingPoisons}) do
 		for _, name in pairs(slot) do
-			poisonItems[name] = select(10, GetItemInfo(name))
+			poisonItems[name] = true
 		end
 	end
 	
@@ -93,7 +93,8 @@ if config.enabled and addon.playerClass == "ROGUE" then
 		
 		local validMerchant
 		
-		for name, texture in pairs(poisonItems) do
+		for name in pairs(poisonItems) do
+			local texture = select(10, GetItemInfo(name))
 			local count = GetItemCount(name)
 			local r, g, b = addon:ConditionColorGradient(math.max(1, count / config.restockThreshold))
 			
