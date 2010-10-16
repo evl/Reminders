@@ -24,10 +24,9 @@ config.hunter.enabled = true
 config.mage.enabled = true
 config.mage.armors = {"Molten Armor", "Mage Armor"} -- List of armors
 
--- Paladin
-config.paladin.auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Shadow Resistance Aura", "Frost Resistance Aura", "Fire Resistance Aura"} -- List of to warn if missing
-config.paladin.seals = {"Seal of Command", "Seal of Righteousness", "Seal of Justice", "Seal of Light", "Seal of Wisdom", "Seal of Corruption", "Seal of Vengeance"} -- List of seals to warn if missing
-config.paladin.blessings = {"Blessing of Might", "Blessing of Wisdom", "Blessing of Kings", "Blessing of Sanctuary"} -- List of blessings to warn if missing
+config.paladin.auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Concentration Aura", "Resistance Aura"} -- List of to warn if missing
+config.paladin.seals = {"Seal of Righteousness", "Seal of Justice", "Seal of Insight", "Seal of Truth"} -- List of seals to warn if missing
+config.paladin.blessings = {"Blessing of Might", "Blessing of Kings"} -- List of blessings to warn if missing
 config.paladin.righteousFury = true
 
 -- Priest

@@ -30,9 +30,9 @@ addon.config = {
 	
 	paladin = {
 		enabled = true,
-		auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Shadow Resistance Aura", "Frost Resistance Aura", "Fire Resistance Aura"},
-		seals = {"Seal of Command", "Seal of Righteousness", "Seal of Justice", "Seal of Light", "Seal of Wisdom", "Seal of Corruption", "Seal of Vengeance"},
-		blessings = {"Blessing of Might", "Greater Blessing of Might", "Blessing of Wisdom", "Greater Blessing of Wisdom", "Blessing of Kings", "Greater Blessing of Kings", "Blessing of Sanctuary"},
+		auras = {"Devotion Aura", "Retribution Aura", "Crusader Aura", "Concentration Aura", "Resistance Aura"},
+		seals = {"Seal of Righteousness", "Seal of Justice", "Seal of Insight", "Seal of Truth"},
+		blessings = {"Blessing of Might", "Blessing of Kings"},
 		righteousFury = true
 	},
 
