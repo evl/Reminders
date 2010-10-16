@@ -122,7 +122,7 @@ local suppressReminder = function(self, reminder, suppressTime)
 	reminder.suppressed = true
 	reminder.suppressTime = suppressTime and (GetTime() + suppressTime) or 0
 	
-	addon:UpdateReminder(reminder, "UPDATE_SUPPRESS")
+	addon:UpdateReminder(reminder)
 end
 
 local menu
@@ -217,20 +217,20 @@ function addon:UpdateAllReminders()
 	self:UpdateLayout()
 end
 
-function addon:UpdateReminderIcons()
-	for _, reminder in pairs(reminders)  do
-		local icon = reminder.icon
-		
-		if not icon then
-			local spell = reminder:GetAttribute("spell") or reminder:GetAttribute("spell1")
-		
-			if spell then
-				icon = select(3, GetSpellInfo(spell))
-			else
-				icon = GetItemIcon(reminder:GetAttribute("item") or reminder:GetAttribute("item1"))
-			end
+function addon:UpdateReminderIcon(reminder)
+	local icon = reminder.icon
+	
+	if not icon then
+		local spell = reminder:GetAttribute("spell") or reminder:GetAttribute("spell1")
+	
+		if spell then
+			icon = select(3, GetSpellInfo(spell))
+		else
+			icon = GetItemIcon(reminder:GetAttribute("item") or reminder:GetAttribute("item1"))
 		end
-
+	end
+	
+	if icon then
 		reminder.setIcon(icon)
 	end
 end
@@ -247,6 +247,8 @@ function addon:UpdateLayout()
 				else
 					reminder:SetPoint("TOPLEFT", frame)
 				end
+
+				self:UpdateReminderIcon(reminder)
 
 				reminder:Show()
 			end
@@ -283,8 +285,6 @@ frame:SetScript("OnEvent", function(self, event)
 		frame:SetHeight(36)
 		frame:SetScale(config.scale)
 		frame:SetPoint(unpack(config.position))		
-
-		addon:UpdateReminderIcons()
 	end
 	
 	if event == "PLAYER_REGEN_ENABLED" then
