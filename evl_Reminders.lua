@@ -44,6 +44,7 @@ addon.config = {
 		enabled = true,
 		mainHandPoisons = {"Instant Poison", "Wound Poison"},
 		offHandPoisons = {"Deadly Poison", "Mind-numbing Poison"},
+		throwingPoisons = {"Wound Poison", "Instant Poison"},
 		thresholdTime = 10,
 		restockThreshold = 10,
 		restockAmount = 40

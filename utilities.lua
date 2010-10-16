@@ -71,7 +71,7 @@ function addon:HasEnchantableWeapon(slot)
 		local subClass, _, equipSlot = select(7, GetItemInfo(link))
 		local localizedSlot = _G[equipSlot]
 		
-		return quality > 1 and (localizedSlot == INVTYPE_WEAPON or localizedSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or (INVTYPE_WEAPONOFFHAND and subClass ~= shield)) or (localizedSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole))
+		return quality > 1 and (localizedSlot == INVTYPE_WEAPON or localizedSlot == INVTYPE_THROWN or localizedSlot == (slot == 16 and INVTYPE_WEAPONMAINHAND or (INVTYPE_WEAPONOFFHAND and subClass ~= shield)) or (localizedSlot == INVTYPE_2HWEAPON and subClass ~= fishingPole))
 	end
 end
 
@@ -89,7 +89,7 @@ end
 
 function addon:WeaponEnchantCallback()
 	local slot = self:GetAttribute("target-slot") or self:GetAttribute("slot")
-	local hasEnchant, expiration = select(slot == 16 and 1 or 4, GetWeaponEnchantInfo())
+	local hasEnchant, expiration = select(((slot - 16) * 3) + 1, GetWeaponEnchantInfo())
 	local validWeapon = addon:HasEnchantableWeapon(slot)
 	
 	if hasEnchant then
