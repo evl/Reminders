@@ -9,7 +9,6 @@ utilities.lua
 modules\inventory.lua
 modules\consumables.lua
 
-modules\deathknight.lua
 modules\druid.lua
 modules\mage.lua
 modules\paladin.lua
